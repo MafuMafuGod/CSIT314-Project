@@ -1,1 +1,0 @@
-print("Hello, CSIT314 project!")

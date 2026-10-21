@@ -84,4 +84,3 @@ def create_tables():
     connection.commit()
     connection.close()
 
-superuser_password = generate_password_hash("superuserpassword")
