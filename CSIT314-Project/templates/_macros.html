@@ -1,0 +1,25 @@
+<!-- IDP result card and IDP detail layout
+ shared by search and detail pages-->
+
+{% macro idpCard(idp, buttonText, url) %}
+<div class="card">
+    <div class="img">{% if idp.imageURL %}<img src="{{ idp.imageURL }}" alt="">{% else %}Image{% endif %}</div>
+    <h3>{{ idp.title }}</h3>
+    <p class="sub">{{ idp.companyName }}{% if idp.companyName and idp.category %} | {% endif %}{{ idp.category }}</p>
+    <a class="btn outline" href="{{ url }}">{{ buttonText }}</a>
+</div>
+{% endmacro %}
+
+{% macro idpDetail(idp) %}
+<div class="detail">
+    <div class="img placeholder big">{% if idp.imageURL %}<img src="{{ idp.imageURL }}" alt=""
+            style="width:100%;height:100%;object-fit:cover">{% else %}Project image{% endif %}</div>
+    <div>
+        <h2>{{ idp.title }}</h2>
+        {% if idp.category %}<span class="tag">{{ idp.category }}</span>{% endif %}
+        {% if idp.companyName %}<p>By {{ idp.companyName }}</p>{% endif %}
+        <div class="desc">{{ idp.description or 'No description available.' }}</div>
+        {{ caller() }}
+    </div>
+</div>
+{% endmacro %}

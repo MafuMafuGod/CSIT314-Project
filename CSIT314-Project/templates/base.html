@@ -1,0 +1,80 @@
+<!-- Shared navigation, status messages, main content area and footer. -->
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}4RENO{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    {% block nav %}
+    <!-- Shared white navigation bar -->
+    <header class="nav">
+        <a class="logo" href="{{ url_for('home.displayHome') }}" aria-label="4RENO home">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="4RENO">
+        </a>
+
+        <nav class="primary-nav" aria-label="Main navigation">
+            <a href="{{ url_for('search_idp.searchPage') }}" class="{{ 'active' if active == 'search' else '' }}">Interior Designers</a>
+            <a href="{{ url_for('search_shortlist.shortlistPage') }}"
+                class="{{ 'active' if active == 'shortlist' else '' }}">My Shortlist</a>
+            {% if session.get('role') == 'admin' %}
+            <a href="{{ url_for('user_management.userManagementPage') }}"
+                class="{{ 'active' if active == 'users' else '' }}">User Management</a>
+            {% endif %}
+        </nav>
+
+        <!-- Account icon and menu are aligned to the right side of the navbar. -->
+        <details class="user-menu">
+            <summary aria-label="Open account menu" title="Account">
+                <svg class="account-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <circle cx="12" cy="8" r="3.5"></circle>
+                    <path d="M4.8 20c.6-4 3.1-6 7.2-6s6.6 2 7.2 6"></path>
+                </svg>
+                <span class="account-label">Account</span>
+            </summary>
+            <div class="account-dropdown">
+                <a class="menu-item" href="{{ url_for('login.loginPage') }}">Log in</a>
+                <form method="post" action="{{ url_for('logout.logoutRoute') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button class="menu-item" type="submit">Log out</button>
+                </form>
+            </div>
+        </details>
+    </header>
+    <!-- Close the account dropdown when the user clicks outside it or presses Escape. -->
+    <script>
+        document.addEventListener("click", function (event) {
+            document.querySelectorAll(".user-menu[open]").forEach(function (menu) {
+                if (!menu.contains(event.target)) {
+                    menu.removeAttribute("open");
+                }
+            });
+        });
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") {
+                document.querySelectorAll(".user-menu[open]").forEach(function (menu) {
+                    menu.removeAttribute("open");
+                });
+            }
+        });
+    </script>
+    {% endblock %}
+    {% block body %}
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}<div class="banner {{ category }}">{{ message }}</div>{% endfor %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>&copy; 4RENO. All rights reserved.</footer>
+    {% endblock %}
+</body>
+
+</html>

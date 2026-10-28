@@ -1,0 +1,63 @@
+<!-- «Boundary» CreateUserAccountPage
+ Create user account form, validation errors (6a / 6b), confirmation message -->
+
+{% extends "base.html" %}
+{% block title %}Create User Account | 4RENO{% endblock %}
+{% block content %}
+
+<style>
+    .formbox input.field-error,
+    .formbox select.field-error {
+        border-color: #c0392b;
+        background: #fdf2f1;
+        margin-bottom: 4px;
+    }
+
+    .field-warning {
+        margin: 0 0 15px;
+        color: #9c2929;
+        font-size: .85rem;
+    }
+
+    .formbox select {
+        margin-bottom: 15px;
+    }
+</style>
+
+<p><a href="{{ url_for('user_management.userManagementPage') }}">&lsaquo; Back to User Management</a></p>
+<h1 style="text-align:left">Create User Account</h1>
+
+{% if successMessage %}<div class="banner ok" role="status">{{ successMessage }}</div>{% endif %}
+
+<form class="formbox" style="max-width:520px" method="post" action="{{ url_for('create_account.createAccountPage') }}"
+    novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <label for="name">Name</label>
+    <input id="name" type="text" name="name" placeholder="Enter full name" maxlength="100"
+        class="{{ 'field-error' if fieldErrors.name }}">
+    {% if fieldErrors.name %}<p class="field-warning">{{ fieldErrors.name }}</p>{% endif %}
+
+    <label for="u">Email</label>
+    <input id="u" type="email" name="u" placeholder="Enter email address" maxlength="100"
+        class="{{ 'field-error' if fieldErrors.u }}">
+    {% if fieldErrors.u %}<p class="field-warning">{{ fieldErrors.u }}</p>{% endif %}
+
+    <label for="p">Initial password</label>
+    <input id="p" type="password" name="p" placeholder="Enter an initial password" autocomplete="new-password"
+        class="{{ 'field-error' if fieldErrors.p }}">
+    {% if fieldErrors.p %}<p class="field-warning">{{ fieldErrors.p }}</p>{% endif %}
+
+    <label for="role">Role</label>
+    <select id="role" name="role" class="{{ 'field-error' if fieldErrors.role }}">
+        <option value="">Select a role</option>
+        {% for value, label in [('homeowner', 'Homeowner'), ('designer', 'Interior Designer'), ('admin', 'User Admin')] %}
+        <option value="{{ value }}">{{ label }}</option>
+        {% endfor %}
+    </select>
+    {% if fieldErrors.role %}<p class="field-warning">{{ fieldErrors.role }}</p>{% endif %}
+
+    <button class="btn" type="submit">Create Account</button>
+    <a class="btn outline" href="{{ url_for('user_management.userManagementPage') }}">Cancel</a>
+</form>
+{% endblock %}

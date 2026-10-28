@@ -1,0 +1,61 @@
+<!-- «Boundary» UserLoginPage
+ Login form, inline field warnings (3b), error / locked banners (3a, 3c) -->
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Log in | 4RENO</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .formbox input.field-error {
+            border-color: #c0392b;
+            background: #fdf2f1;
+            margin-bottom: 4px;
+        }
+
+        .field-warning {
+            margin: 0 0 15px;
+            color: #9c2929;
+            font-size: .85rem;
+        }
+    </style>
+</head>
+
+<body class="login-standalone">
+    <main class="split login-page">
+        <section class="left login-welcome">
+            <a class="logo login-logo" href="{{ url_for('login.loginPage') }}" aria-label="4RENO home">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="4RENO">
+            </a>
+            <div class="login-welcome-copy">
+                <h2>Welcome to 4RENO!</h2>
+                <p>Find the right interior designer for your home.</p>
+            </div>
+        </section>
+        <section class="right">
+            <form class="formbox" method="post" action="{{ url_for('login.loginPage') }}" novalidate>
+                <h1>Account Login</h1>
+
+                {% if error %}<div class="banner err" role="alert">{{ error }}</div>{% endif %}
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <label for="u">Email</label>
+                <input id="u" type="email" name="u" value="{{ u }}" placeholder="Enter your email"
+                    autocomplete="username" class="{{ 'field-error' if 'u' in missingFields }}">
+                {% if 'u' in missingFields %}<p class="field-warning">Please enter your email.</p>{% endif %}
+
+                <label for="p">Password</label>
+                <input id="p" type="password" name="p" placeholder="Enter your password"
+                    autocomplete="current-password" class="{{ 'field-error' if 'p' in missingFields }}">
+                {% if 'p' in missingFields %}<p class="field-warning">Please enter your password.</p>{% endif %}
+
+                <button class="btn" style="width:100%" type="submit">Log in</button>
+            </form>
+        </section>
+    </main>
+</body>
+
+</html>

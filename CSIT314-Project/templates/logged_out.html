@@ -1,0 +1,45 @@
+<!-- Logged out confirmation page
+ Links back to login -->
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Logged out | 4RENO</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="logout-standalone">
+    <main class="split logout-page">
+        <section class="left logout-welcome" aria-label="Welcome to 4RENO">
+            <a class="logo logout-logo" href="{{ url_for('home.displayHome') }}" aria-label="4RENO home">
+                <img src="{{ url_for('static', filename='Logo.png') }}" alt="4RENO">
+            </a>
+            <div class="logout-welcome-copy">
+                <h1>Welcome to 4RENO!</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur<br class="desktop-break"> adipiscing elit. Vulputate ut
+                    laoreet velit ma.</p>
+                <div class="logout-image-placeholder" role="img" aria-label="Image placeholder">
+                    <svg viewBox="0 0 100 72" aria-hidden="true" focusable="false">
+                        <circle cx="27" cy="17" r="8"></circle>
+                        <path d="M8 61 31 36 43 49 61 25 92 61Z"></path>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <section class="right logout-confirmation">
+            <div class="logout-message">
+                <h2>You have been logged out</h2>
+                <p>Your session has ended.<br>Please log in again to access account-only features.</p>
+                <a class="logout-login-button" href="{{ url_for('login.loginPage') }}">Login</a>
+                <p class="logout-signup">Don't have an account? <a href="#"
+                        aria-label="Sign up (not available in this preview)">Sign Up</a></p>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>
