@@ -2,32 +2,26 @@
 4RENO - Use Case #06: User Login
        Use Case #07: User Logout
        Use Case #42: Create User Account
-"As a user, I want to log in with my credentials so that I can access
- the features for my role."
+       Use Case #43: View User Account
 
 BCE structure
-  «Boundary»  UserLoginPage        -> login.html + route functions (no class)
+  «Boundary»  UserLoginPage        -> no class 
   «Control»   UserLoginController  -> class
   «Entity»    UserAccount          -> class
 
-Run:  python app.py   then open http://127.0.0.1:5000/login
+Run:  python app.py   
 Demo accounts (u / p / role):
   homeowner@4reno.com / password123 / homeowner
   designer@4reno.com  / design123   / designer
   admin@4reno.com     / admin123    / admin
 """
 import secrets
-from typing import Optional, Union
+from typing import Optional
 from flask import (Flask, Blueprint, render_template, render_template_string,
-                   request, session, abort, flash, redirect, url_for, Response)
+                   request, session, abort, flash, redirect, url_for)
 
 app = Flask(__name__)
 app.secret_key = "dev-secret-change-me"
-
-
-# ######################################################################
-#                      USE CASE #06 : USER LOGIN
-# ######################################################################
 
 # ======================================================================
 # «Entity» UserAccount
@@ -37,11 +31,12 @@ class UserAccount:
 
     _accounts = []                      # stand-in for the database table
 
-    def __init__(self, name: str, u: str, p: str, role: str) -> None:
+    def __init__(self, name: str, u: str, p: str, role: str, status: str = "active") -> None:
         self._name = name                # full name
         self._u = u                      # username (email)
         self._p = p                      # password
         self._role = role                # homeowner / designer / admin
+        self._status = status            # active / suspended
 
     # ---- private helper ----------------------------------------------
     @classmethod
@@ -51,7 +46,7 @@ class UserAccount:
                 return account
         return None
 
-    # ---- public methods (called by the Control) ----------------------
+    # ---- public methods (called by the Controller) ----------------------
     @classmethod
     def userAccountLogin(cls, u: str, p: str) -> bool:
         """Step 5: verify credentials against the database."""
@@ -67,14 +62,30 @@ class UserAccount:
     # ---- used by Create User Account (#42) ----------------------------
     @classmethod
     def accountExists(cls, u: str) -> bool:
-        """#42 6b: check whether the email is already registered."""
+        """step 6b"""
         return cls._findAccount(u) is not None
 
     @classmethod
     def createAccount(cls, name: str, u: str, p: str, role: str) -> bool:
-        """#42 step 7: save the new account. Returns accountCreated."""
+        """step 7"""
         cls._accounts.append(UserAccount(name, u, p, role))
         return True
+
+    # ---- used by View User Account (#43) ------------------------------
+    def _toDict(self) -> dict:
+        """Account details for display (password is never included)."""
+        return {"name": self._name, "u": self._u, "role": self._role, "status": self._status}
+
+    @classmethod
+    def getAllAccounts(cls) -> list:
+        """#43 step 1: return every account, for the User Management list."""
+        return [account._toDict() for account in cls._accounts]
+
+    @classmethod
+    def selectUserAccount(cls, u: str) -> dict:
+        """#43 step 3: return one account's details ({} if not found)."""
+        account = cls._findAccount(u)
+        return account._toDict() if account else {}
 
 
 # Sample data
@@ -110,9 +121,9 @@ class UserLoginController:
         return UserAccount.getRole(u)
 
 
-# ======================================================================
+
 # «Boundary» UserLoginPage  (no class: templates + route functions)
-# ======================================================================
+
 login = Blueprint("login", __name__)
 
 
@@ -130,21 +141,13 @@ def displayLoginError(u: str) -> str:                                    # 3a
     return displayLoginForm("Invalid username or password", u)
 
 
-def displayLoginSuccess(u: str, role: str) -> Response:                  # step 6
+def displayLoginSuccess(u: str, role: str) -> str:                       # step 6
     flash(f"Logged in successfully as {role.capitalize()}.", "ok")
-    return redirect(url_for("home.displayHome"))
+    return render_template("home.html", categories=[], featured=[])
 
 
-@login.route("/", methods=["GET"])
-@login.route("/login", methods=["GET", "POST"])
-def loginPage() -> Union[str, Response]:
-    # Step 1: user arrives at login page
-    if request.method == "GET":
-        return displayLoginForm()
-
-    # Steps 2-3: user enters credentials and clicks "Log In"
-    u = request.form.get("u", "").strip()
-    p = request.form.get("p", "")
+def submitLogin(u: str, p: str) -> str:
+    # Steps 2-3: user entered credentials and clicked "Log In"
     controller = UserLoginController()
 
     # Step 4: check required fields
@@ -164,14 +167,20 @@ def loginPage() -> Union[str, Response]:
     return displayLoginSuccess(u, role)
 
 
-# ######################################################################
-#                      USE CASE #07 : USER LOGOUT
-# "As a user, I want to log out so that my session is secure."
-# ######################################################################
+@login.route("/", methods=["GET"])
+@login.route("/login", methods=["GET", "POST"])
+def loginPage() -> str:
+    # Step 1: user arrives at login page
+    if request.method == "GET":
+        return displayLoginForm()
+    # Form submitted: pass the entered u and p to submitLogin
+    return submitLogin(request.form.get("u", "").strip(), request.form.get("p", ""))
 
-# ======================================================================
-# «Entity» UserSession
-# ======================================================================
+
+
+#                          USE CASE #07 : USER LOGOUT
+
+
 class UserSession:
     """The logged-in user's active session (the u and role saved at login)."""
 
@@ -212,12 +221,12 @@ def displayLogoutSuccess() -> str:                                       # step 
     return render_template("logged_out.html")
 
 
-def displayNotLoggedIn() -> Response:                                    # 1a
-    return redirect(url_for("login.loginPage"))
+def displayNotLoggedIn() -> str:                                         # 1a
+    return render_template("login.html", error=None, u="", missingFields=[])
 
 
 @logout.route("/logout", methods=["POST"])
-def logoutRoute() -> Union[str, Response]:
+def logoutRoute() -> str:
     # Step 1: user clicks Log Out
     logoutSuccess = UserLogoutController().userAccountLogout()
 
@@ -226,16 +235,9 @@ def logoutRoute() -> Union[str, Response]:
     return displayNotLoggedIn()             # [else]
 
 
-# ######################################################################
 #                 USE CASE #42 : CREATE USER ACCOUNT
-# "As a User Admin, I want to create a user account so that a person can
-#  access the platform according to their permissions."
-# Entity: reuses UserAccount (from #06)
-# ######################################################################
 
-# ======================================================================
 # «Control» CreateUserAccountController
-# ======================================================================
 class CreateUserAccountController:
     """Validates new account data and creates the account."""
 
@@ -264,10 +266,10 @@ class CreateUserAccountController:
         return UserAccount.createAccount(name, u, p, role)
 
 
-# ======================================================================
-# «Boundary» CreateUserAccountPage  (no class: create_account.html + route functions)
+
+# «Boundary» CreateUserAccountPage  
 # Precondition (User Admin logged in) is enforced by requireAdmin() further below.
-# ======================================================================
+
 create_account = Blueprint("create_account", __name__)
 
 
@@ -284,17 +286,8 @@ def displayCreateAccountSuccess(u: str) -> str:                                 
     return displayCreateAccountForm(successMessage=f"User account for {u} was created successfully.")
 
 
-@create_account.route("/admin/users/create", methods=["GET", "POST"])
-def createAccountPage() -> str:
-    # Steps 2-3: admin clicks "Create New User", system shows the form
-    if request.method == "GET":
-        return displayCreateAccountForm()
-
-    # Steps 4-5: admin enters details and submits
-    name = request.form.get("name", "").strip()
-    u = request.form.get("u", "").strip()
-    p = request.form.get("p", "")
-    role = request.form.get("role", "")
+def submitCreateAccount(name: str, u: str, p: str, role: str) -> str:
+    # Steps 4-5: admin entered details and submitted
     controller = CreateUserAccountController()
 
     # Step 6: validate (includes 6b: email already exists)
@@ -307,11 +300,75 @@ def createAccountPage() -> str:
     return displayCreateAccountSuccess(u)
 
 
-# ======================================================================
-# Placeholder pages (NOT part of use cases #06 / #07 / #42)
+@create_account.route("/admin/users/create", methods=["GET", "POST"])
+def createAccountPage() -> str:
+    # Steps 2-3: admin clicks "Create New User", system shows the form
+    if request.method == "GET":
+        return displayCreateAccountForm()
+    # Form submitted: pass the entered details to submitCreateAccount
+    return submitCreateAccount(request.form.get("name", "").strip(),
+                               request.form.get("u", "").strip(),
+                               request.form.get("p", ""),
+                               request.form.get("role", ""))
+
+
+
+#                  USE CASE #43 : VIEW USER ACCOUNT
+
+
+# «Control» ViewUserAccountController
+
+class ViewUserAccountController:
+    """Gets the account list and a selected account's details from the Entity."""
+
+    def getUserAccountList(self) -> list:
+        """Step 1: returns userAccounts."""
+        return UserAccount.getAllAccounts()
+
+    def selectUserAccount(self, u: str) -> dict:
+        """Steps 2-3: returns userAccount."""
+        return UserAccount.selectUserAccount(u)
+
+
+
+# «Boundary» ViewUserAccountPage  (no class: user_management.html,
+#                                  view_account.html + route functions)
+# Precondition (User Admin logged in) is enforced by requireAdmin() further below.
+
+user_management = Blueprint("user_management", __name__)
+
+
+def displayUserAccountList(userAccounts: list) -> str:                          # step 1
+    return render_template("user_management.html", userAccounts=userAccounts, active="users")
+
+
+def displayUserAccountDetails(userAccount: dict) -> str:                        # step 3
+    return render_template("view_account.html", userAccount=userAccount, active="users")
+
+
+@user_management.route("/admin/users")
+def userManagementPage() -> str:
+    # Step 1: User Admin opens the User Management section
+    userAccounts = ViewUserAccountController().getUserAccountList()
+    return displayUserAccountList(userAccounts)
+
+
+@user_management.route("/admin/users/view/<u>")
+def viewUserAccount(u: str) -> str:
+    # Step 2: User Admin selects a user account from the list
+    userAccount = ViewUserAccountController().selectUserAccount(u)
+    if not userAccount:              # precondition: account must exist
+        abort(404)
+    # Step 3: display its details
+    return displayUserAccountDetails(userAccount)
+
+
+
+# Placeholder pages (NOT part of use cases #06 / #07 / #42 / #43)
 # These only exist so the navbar links in base.html work. Each one gets
 # replaced with real Boundary / Control / Entity code in its own use case.
-# ======================================================================
+
+
 COMING_SOON = """{% extends "base.html" %}
 {% block title %}{{ name }} | 4RENO{% endblock %}
 {% block content %}<h1>{{ name }}</h1><div class="banner info">Coming soon.</div>{% endblock %}"""
@@ -319,13 +376,6 @@ COMING_SOON = """{% extends "base.html" %}
 home = Blueprint("home", __name__)
 search_idp = Blueprint("search_idp", __name__)
 search_shortlist = Blueprint("search_shortlist", __name__)
-user_management = Blueprint("user_management", __name__)
-
-USER_MANAGEMENT = """{% extends "base.html" %}
-{% block title %}User Management | 4RENO{% endblock %}
-{% block content %}<h1>User Management</h1>
-<p><a class="btn" href="{{ url_for('create_account.createAccountPage') }}">Create New User</a></p>
-<div class="banner info">Viewing and searching accounts: coming soon.</div>{% endblock %}"""
 
 
 @home.route("/home")
@@ -338,32 +388,14 @@ def searchPage():
     return render_template_string(COMING_SOON, name="Interior Designers", active="search")
 
 
-@user_management.route("/admin/users")
-def userManagementPage():
-    return render_template_string(USER_MANAGEMENT, active="users")
-
-
 @search_shortlist.route("/shortlist")
 def shortlistPage():
     return render_template_string(COMING_SOON, name="My Shortlist", active="shortlist")
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-# ======================================================================
 # Infrastructure (not part of the BCE diagrams): admin guard + CSRF protection
-# ======================================================================
+
 @app.context_processor
 def inject_csrf():
     def csrf_token():
@@ -375,7 +407,7 @@ def inject_csrf():
 
 @app.before_request
 def requireAdmin():
-  
+    """Precondition for #42: only a logged-in User Admin may open /admin pages."""
     if request.path.startswith("/admin") and session.get("role") != "admin":
         flash("You do not have permission to access User Management.", "err")
         return redirect(url_for("home.displayHome"))
