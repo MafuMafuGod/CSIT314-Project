@@ -23,9 +23,9 @@ from flask import (Flask, Blueprint, render_template, render_template_string,
 app = Flask(__name__)
 app.secret_key = "dev-secret-change-me"
 
-# ======================================================================
+
 # «Entity» UserAccount
-# ======================================================================
+
 class UserAccount:
     """A registered user account. Owns the account data and checks credentials."""
 
