@@ -3,10 +3,9 @@
 from flask import Blueprint, render_template, request
 
 from control import CreateUserAccountController
+from boundary.profiles import VALID_PROFILES
 
 create_account = Blueprint("create_account", __name__)
-
-VALID_PROFILES = ["homeowner", "designer", "admin"]
 
 
 def displayCreateAccountForm(fieldErrors: dict = None, successMessage: str = None) -> str:

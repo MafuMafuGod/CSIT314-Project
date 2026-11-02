@@ -20,7 +20,7 @@
 <div class="va-box">
     <div class="va-row"><span class="va-label">Name</span><span class="va-value">{{ userAccount.name }}</span></div>
     <div class="va-row"><span class="va-label">Email</span><span class="va-value">{{ userAccount.u }}</span></div>
-    <div class="va-row"><span class="va-label">Profile</span><span class="va-value">{{ userAccount.profile | capitalize }}</span></div>
+    <div class="va-row"><span class="va-label">Profile</span><span class="va-value">{{ profileLabels.get(userAccount.profile, userAccount.profile) }}</span></div>
     <div class="va-row"><span class="va-label">Status</span><span class="va-value">{{ userAccount.status | capitalize }}</span></div>
 </div>
 {% endblock %}

@@ -33,7 +33,7 @@
             <tr>
                 <td>{{ a.name }}</td>
                 <td>{{ a.u }}</td>
-                <td>{{ a.profile | capitalize }}</td>
+                <td>{{ profileLabels.get(a.profile, a.profile) }}</td>
                 <td class="um-status {{ a.status }}">{{ a.status | capitalize }}</td>
                 <td><a class="btn outline" href="{{ url_for('user_management.viewUserAccount', u=a.u) }}">View</a></td>
             </tr>

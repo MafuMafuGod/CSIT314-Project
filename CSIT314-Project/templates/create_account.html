@@ -51,7 +51,7 @@
     <label for="profile">Profile</label>
     <select id="profile" name="profile" class="{{ 'field-error' if fieldErrors.profile }}">
         <option value="">Select a profile</option>
-        {% for value, label in [('homeowner', 'Homeowner'), ('designer', 'Interior Designer'), ('admin', 'User Admin')] %}
+        {% for value, label in profileLabels.items() %}
         <option value="{{ value }}">{{ label }}</option>
         {% endfor %}
     </select>

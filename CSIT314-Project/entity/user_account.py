@@ -11,7 +11,7 @@ class UserAccount:
         self._name = name                # full name
         self._u = u                      # username (email)
         self._p = p                      # password
-        self._profile = profile                # homeowner / designer / admin
+        self._profile = profile                # customer / designer / admin / platform
         self._status = status            # active / suspended
 
     # ---- private helpers ---------------------------------------------------
@@ -66,7 +66,8 @@ class UserAccount:
 
 # Sample data
 UserAccount._accounts = [
-    UserAccount("Hannah Tan", "homeowner@4reno.com", "password123", "homeowner"),
+    UserAccount("Hannah Tan", "customer@4reno.com", "password123", "customer"),
     UserAccount("Daniel Lim", "designer@4reno.com", "design123", "designer"),
     UserAccount("Alex Wong", "admin@4reno.com", "admin123", "admin"),
+    UserAccount("Priya Nair", "platform@4reno.com", "platform123", "platform"),
 ]

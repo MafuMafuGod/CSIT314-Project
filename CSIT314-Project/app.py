@@ -20,9 +20,10 @@ BCE rules for all use cases (current and future):
 
 Run:  python app.py
 Demo accounts (u / p / profile):
-  homeowner@4reno.com / password123 / homeowner
+  customer@4reno.com  / password123 / customer
   designer@4reno.com  / design123   / designer
   admin@4reno.com     / admin123    / admin
+  platform@4reno.com  / platform123 / platform
 """
 
 
@@ -31,6 +32,7 @@ import secrets
 from flask import Flask, request, session, abort, flash, redirect, url_for
 
 from boundary import ALL_BLUEPRINTS
+from boundary.profiles import PROFILE_LABELS
 
 app = Flask(__name__)
 app.secret_key = "dev-secret-change-me"
@@ -45,6 +47,12 @@ def inject_csrf():
             session["csrf"] = secrets.token_hex(16)
         return session["csrf"]
     return {"csrf_token": csrf_token}
+
+
+@app.context_processor
+def inject_profile_labels():
+    """Lets every template show "Interior Designer" instead of "designer"."""
+    return {"profileLabels": PROFILE_LABELS}
 
 
 @app.before_request

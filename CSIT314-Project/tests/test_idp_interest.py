@@ -117,7 +117,7 @@ class TestBoundary:
             assert "Create IDP" in html
 
     def test_customer_cannot_open_interest_page(self, client):              # precondition
-        login_as(client, "homeowner@4reno.com", "homeowner")
+        login_as(client, "customer@4reno.com", "customer")
         r = client.get("/designer/interest/views")
         assert r.status_code == 302
 
