@@ -3,6 +3,8 @@
        Use Case #07: User Logout
        Use Case #42: Create User Account
        Use Case #43: View User Account
+       Use Case #40: Track and display IDP view count       (Matthew)
+       Use Case #41: Track and display IDP shortlist count  (Matthew)
 
 BCE structure
   «Boundary»  UserLoginPage        -> no class 
@@ -358,7 +360,146 @@ def viewUserAccount(u: str) -> str:
 
 
 
-# Placeholder pages (NOT part of use cases #06 / #07 / #42 / #43)
+#        USE CASE #40 : TRACK AND DISPLAY IDP VIEW COUNT       (Matthew)
+#        USE CASE #41 : TRACK AND DISPLAY IDP SHORTLIST COUNT  (Matthew)
+
+
+
+# «Entity» InteriorDesignProject  (shared with portfolio #52-#56)
+
+class InteriorDesignProject:
+    """An Interior Design Project (IDP) owned by one Interior Designer."""
+
+    _idps = []                          # stand-in for the database table
+
+    def __init__(self, idpID: int, designerU: str, title: str, createdDate: str,
+                 viewCount: int = 0, shortlistCount: int = 0) -> None:
+        self._idpID = idpID
+        self._designerU = designerU      # the ID's username (email)
+        self._title = title              # project name
+        self._createdDate = createdDate  # "YYYY-MM-DD"
+        self._viewCount = viewCount
+        self._shortlistCount = shortlistCount
+
+    # ---- private helpers -------------------------------------------------
+    @classmethod
+    def _findIDP(cls, idpID: int) -> Optional["InteriorDesignProject"]:
+        for idp in cls._idps:
+            if idp._idpID == idpID:
+                return idp
+        return None
+
+    @classmethod
+    def _getIDPsByDesigner(cls, designerU: str) -> list:
+        return [idp for idp in cls._idps if idp._designerU == designerU]
+
+    # ---- #40 step 2: retrieve the ID's IDPs with their view counts --------
+    @classmethod
+    def getViewCounts(cls, designerU: str) -> list:
+        """Returns idpViewCounts, most-viewed first. [] if the ID has no IDP (2a)."""
+        rows = [{"idpID": idp._idpID, "title": idp._title,
+                 "createdDate": idp._createdDate, "viewCount": idp._viewCount}
+                for idp in cls._getIDPsByDesigner(designerU)]
+        return sorted(rows, key=lambda r: r["viewCount"], reverse=True)
+
+    # ---- #41 step 2: retrieve the ID's IDPs with their shortlist counts ---
+    @classmethod
+    def getShortlistCounts(cls, designerU: str) -> list:
+        """Returns idpShortlistCounts, most-shortlisted first. [] if none (2a)."""
+        rows = [{"idpID": idp._idpID, "title": idp._title,
+                 "createdDate": idp._createdDate, "shortlistCount": idp._shortlistCount}
+                for idp in cls._getIDPsByDesigner(designerU)]
+        return sorted(rows, key=lambda r: r["shortlistCount"], reverse=True)
+
+    # ---- tracking: called by #33 and #34 ----------------------------------
+    @classmethod
+    def incrementViewCount(cls, idpID: int) -> bool:
+        """A customer viewed the IDP's details (#33)."""
+        idp = cls._findIDP(idpID)
+        if idp is None:
+            return False
+        idp._viewCount += 1
+        return True
+
+    @classmethod
+    def incrementShortlistCount(cls, idpID: int) -> bool:
+        """A customer saved the IDP to their shortlist (#34). Call only when
+        the save is new, so a duplicate save (#34 alt 3a) is not counted."""
+        idp = cls._findIDP(idpID)
+        if idp is None:
+            return False
+        idp._shortlistCount += 1
+        return True
+
+
+# Sample data (replace with the shared 100-record test data script later)
+InteriorDesignProject._idps = [
+    InteriorDesignProject(1, "designer@4reno.com", "Tampines HDB Scandinavian Makeover", "2026-08-14", 342, 41),
+    InteriorDesignProject(2, "designer@4reno.com", "Punggol Waterway Condo Kitchen", "2026-09-02", 518, 77),
+    InteriorDesignProject(3, "designer@4reno.com", "Bishan Landed Home Revamp", "2026-09-21", 129, 12),
+    InteriorDesignProject(4, "designer@4reno.com", "Sengkang BTO Minimalist Living Room", "2026-10-08", 87, 15),
+    InteriorDesignProject(5, "designer@4reno.com", "Clementi Resale Japandi Bedroom", "2026-10-19", 23, 2),
+]
+
+
+# «Control» ViewIDPViewCountController  (#40)
+
+class ViewIDPViewCountController:
+    """#40: gets the ID's IDP view counts from the Entity."""
+
+    def getViewCounts(self, u: str) -> list:
+        """Step 2: returns idpViewCounts."""
+        return InteriorDesignProject.getViewCounts(u)
+
+
+# «Control» ViewIDPShortlistCountController  (#41)
+
+class ViewIDPShortlistCountController:
+    """#41: gets the ID's IDP shortlist counts from the Entity."""
+
+    def getShortlistCounts(self, u: str) -> list:
+        """Step 2: returns idpShortlistCounts."""
+        return InteriorDesignProject.getShortlistCounts(u)
+
+
+# «Boundary» IDPInterestPage  (no class: interest.html + route functions)
+
+idp_interest = Blueprint("idp_interest", __name__)
+
+
+def displayIDPInterest(tab: str, rows: list) -> str:                    # step 3
+    return render_template("interest.html", tab=tab, rows=rows, active="interest")
+
+
+def displayNoIDPFound(tab: str) -> str:                                 # 2a1
+    return render_template("interest.html", tab=tab, rows=[], active="interest")
+
+
+@idp_interest.route("/designer/interest")
+@idp_interest.route("/designer/interest/views")
+def viewCountPage() -> str:
+    # #40 Step 1: ID clicks "IDP Interest" in the navigation bar
+    u = session["u"]
+    # Step 2: retrieve all the ID's IDPs with their view counts
+    idpViewCounts = ViewIDPViewCountController().getViewCounts(u)
+    if not idpViewCounts:
+        return displayNoIDPFound("views")                   # [idpViewCounts empty] 2a
+    return displayIDPInterest("views", idpViewCounts)       # [else] step 3
+
+
+@idp_interest.route("/designer/interest/shortlists")
+def shortlistCountPage() -> str:
+    # #41 Step 1: ID clicks "IDP Interest", then the "Shortlisted" tab
+    u = session["u"]
+    # Step 2: retrieve all the ID's IDPs with their shortlist counts
+    idpShortlistCounts = ViewIDPShortlistCountController().getShortlistCounts(u)
+    if not idpShortlistCounts:
+        return displayNoIDPFound("shortlists")              # [idpShortlistCounts empty] 2a
+    return displayIDPInterest("shortlists", idpShortlistCounts)   # [else] step 3
+
+
+
+# Placeholder pages (NOT part of use cases #06 / #07 / #42 / #43 / #40 / #41)
 # These only exist so the navbar links in base.html work. Each one gets
 # replaced with real Boundary / Control / Entity code in its own use case.
 
@@ -388,7 +529,7 @@ def shortlistPage():
 
 
 
-# Infrastructure (not part of the BCE diagrams): admin guard + CSRF protection
+# Infrastructure (not part of the BCE diagrams): admin guard, designer guard + CSRF protection
 
 @app.context_processor
 def inject_csrf():
@@ -408,13 +549,24 @@ def requireAdmin():
 
 
 @app.before_request
+def requireDesigner():
+    """Precondition for #40/#41: only a logged-in ID may open the IDP Interest page."""
+    if request.path.startswith("/designer/interest"):
+        if not session.get("u"):
+            return redirect(url_for("login.loginPage"))
+        if session.get("role") != "designer":
+            flash("Only Interior Designers can view IDP interest.", "err")
+            return redirect(url_for("home.displayHome"))
+
+
+@app.before_request
 def check_csrf():
     if request.method == "POST" and request.form.get("csrf_token") != session.get("csrf"):
         abort(400, "Invalid CSRF token")
 
 
 for bp in (login, logout, create_account, home, search_idp, search_shortlist,
-           user_management):
+           user_management, idp_interest):
     app.register_blueprint(bp)
 
 if __name__ == "__main__":
