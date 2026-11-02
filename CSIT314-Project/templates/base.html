@@ -35,13 +35,13 @@
           class="{{ 'active' if active == 'shortlist' else '' }}"
           >My Shortlist</a
         >
-        {% if session.get('role') == 'designer' %}
+        {% if session.get('profile') == 'designer' %}
         <a
           href="{{ url_for('idp_interest.viewCountPage') }}"
           class="{{ 'active' if active == 'interest' else '' }}"
           >IDP Interest</a
         >
-        {% endif %} {% if session.get('role') == 'admin' %}
+        {% endif %} {% if session.get('profile') == 'admin' %}
         <a
           href="{{ url_for('user_management.userManagementPage') }}"
           class="{{ 'active' if active == 'users' else '' }}"

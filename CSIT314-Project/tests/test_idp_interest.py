@@ -4,7 +4,7 @@ Unit tests for User Story #40 (track/display IDP view count)
 
 Written BEFORE idp_interest.py (test-driven development).
 Run from the project folder:   python -m pytest tests/test_idp_interest.py -v
-(Import changed from idp_interest to app after merging #40/#41 into app.py.)
+(Imports changed to entity/ and control/ after the Boundary/Control/Entity split.)
 """
 import os
 import sys
@@ -14,9 +14,9 @@ import pytest
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import app as app_module                                   # noqa: E402
-from app import (InteriorDesignProject,                    # noqa: E402
-                          ViewIDPViewCountController,
-                          ViewIDPShortlistCountController)
+from entity import InteriorDesignProject                    # noqa: E402
+from control import (ViewIDPViewCountController,           # noqa: E402
+                     ViewIDPShortlistCountController)
 
 DESIGNER = "designer@4reno.com"
 NEW_DESIGNER = "newdesigner@4reno.com"      # a designer with no IDPs (alt flow 2a)
@@ -42,10 +42,10 @@ def client():
         yield c
 
 
-def login_as(client, u, role):
+def login_as(client, u, profile):
     with client.session_transaction() as s:
         s["u"] = u
-        s["role"] = role
+        s["profile"] = profile
 
 
 # ---------------------------------------------------------------- Entity

@@ -48,14 +48,14 @@
         class="{{ 'field-error' if fieldErrors.p }}">
     {% if fieldErrors.p %}<p class="field-warning">{{ fieldErrors.p }}</p>{% endif %}
 
-    <label for="role">Role</label>
-    <select id="role" name="role" class="{{ 'field-error' if fieldErrors.role }}">
-        <option value="">Select a role</option>
+    <label for="profile">Profile</label>
+    <select id="profile" name="profile" class="{{ 'field-error' if fieldErrors.profile }}">
+        <option value="">Select a profile</option>
         {% for value, label in [('homeowner', 'Homeowner'), ('designer', 'Interior Designer'), ('admin', 'User Admin')] %}
         <option value="{{ value }}">{{ label }}</option>
         {% endfor %}
     </select>
-    {% if fieldErrors.role %}<p class="field-warning">{{ fieldErrors.role }}</p>{% endif %}
+    {% if fieldErrors.profile %}<p class="field-warning">{{ fieldErrors.profile }}</p>{% endif %}
 
     <button class="btn" type="submit">Create Account</button>
     <a class="btn outline" href="{{ url_for('user_management.userManagementPage') }}">Cancel</a>
