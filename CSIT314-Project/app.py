@@ -96,9 +96,9 @@ UserAccount._accounts = [
 ]
 
 
-# ======================================================================
+
 # «Control» UserLoginController
-# ======================================================================
+
 class UserLoginController:
     """Receives requests from the Boundary and applies them to the Entity."""
 
@@ -199,9 +199,9 @@ class UserSession:
         return True
 
 
-# ======================================================================
+
 # «Control» UserLogoutController
-# ======================================================================
+
 class UserLogoutController:
     """Receives the logout request from the Boundary and applies it to the Entity."""
 
@@ -210,10 +210,10 @@ class UserLogoutController:
         return UserSession().killSession()
 
 
-# ======================================================================
+
 # «Boundary» UserLogoutPage  (no class: base.html Log Out button,
 #                             logged_out.html + route functions)
-# ======================================================================
+
 logout = Blueprint("logout", __name__)
 
 
@@ -268,7 +268,6 @@ class CreateUserAccountController:
 
 
 # «Boundary» CreateUserAccountPage  
-# Precondition (User Admin logged in) is enforced by requireAdmin() further below.
 
 create_account = Blueprint("create_account", __name__)
 
@@ -329,11 +328,6 @@ class ViewUserAccountController:
         """Steps 2-3: returns userAccount."""
         return UserAccount.selectUserAccount(u)
 
-
-
-# «Boundary» ViewUserAccountPage  (no class: user_management.html,
-#                                  view_account.html + route functions)
-# Precondition (User Admin logged in) is enforced by requireAdmin() further below.
 
 user_management = Blueprint("user_management", __name__)
 
