@@ -1,0 +1,26 @@
+<!-- «Boundary» ViewUserAccountPage — #43 step 3
+ One account's details (the password is never shown).
+ PLACEHOLDER: replace with the #43 owner's own template if they have one. -->
+
+{% extends "base.html" %}
+{% block title %}{{ userAccount.name }} | 4RENO{% endblock %}
+{% block content %}
+
+<style>
+    .va-box { max-width: 520px; background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 20px; }
+    .va-row { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px solid #eee; }
+    .va-row:last-child { border-bottom: 0; }
+    .va-label { color: #666; }
+    .va-value { font-weight: 600; text-align: right; word-break: break-all; }
+</style>
+
+<p><a href="{{ url_for('user_management.userManagementPage') }}">&lsaquo; Back to User Management</a></p>
+<h1 style="text-align:left">User Account Details</h1>
+
+<div class="va-box">
+    <div class="va-row"><span class="va-label">Name</span><span class="va-value">{{ userAccount.name }}</span></div>
+    <div class="va-row"><span class="va-label">Email</span><span class="va-value">{{ userAccount.u }}</span></div>
+    <div class="va-row"><span class="va-label">Profile</span><span class="va-value">{{ profileLabels.get(userAccount.profile, userAccount.profile) }}</span></div>
+    <div class="va-row"><span class="va-label">Status</span><span class="va-value">{{ userAccount.status | capitalize }}</span></div>
+</div>
+{% endblock %}
