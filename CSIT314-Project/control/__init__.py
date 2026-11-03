@@ -1,7 +1,0 @@
-"""«Control» layer: coordinates each use case. Imported only by the Boundary layer."""
-from control.user_login_controller import UserLoginController
-from control.user_logout_controller import UserLogoutController
-from control.create_user_account_controller import CreateUserAccountController
-from control.view_user_account_controller import ViewUserAccountController
-from control.view_idp_view_count_controller import ViewIDPViewCountController
-from control.view_idp_shortlist_count_controller import ViewIDPShortlistCountController
