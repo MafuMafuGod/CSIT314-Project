@@ -1,0 +1,20 @@
+<!-- Shortlisted-project details view
+ error message if proj is unavailable or not in collection -->
+
+{% extends "base.html" %}
+{% from "_macros.html" import idpDetail %}
+{% block title %}Shortlist project | 4RENO{% endblock %}
+{% block content %}
+
+<h1 style="text-align: left">My Shortlist</h1>
+{% if idp %}
+{% call idpDetail(idp) %}
+<p style="margin-top:16px"><a class="btn outline" href="{{ url_for('search_shortlist.shortlistPage') }}">Back to
+        Shortlist</a></p>
+{% endcall %}
+{% else %}
+<div class="banner {{ kind }}">{{ message }}</div>
+<p><a class="btn outline" href="{{ url_for('search_shortlist.shortlistPage') }}">Back to Shortlist</a></p>
+
+{% endif %}
+{% endblock %}

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Log in | 4RENO</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="login-standalone">
+    <main class="split login-page">
+        <section class="left login-welcome">
+            <a class="logo login-logo" href="{{ url_for('home.displayHome') }}" aria-label="4RENO home">
+                <img src="{{ url_for('static', filename='Logo.png') }}" alt="4RENO">
+            </a>
+            <div class="login-welcome-copy">
+                <h2>Welcome to 4RENO!</h2>
+                <p>Find the right interior designer for your home.</p>
+            </div>
+        </section>
+        <section class="right">
+            <form class="formbox" method="post" action="{{ url_for('login.loginPage') }}" novalidate>
+                <h1>Account Login</h1>
+                {% if error %}<div class="banner err" role="alert">{{ error }}</div>{% endif %}
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <label for="email">Email</label>
+                <input id="email" type="email" name="email" value="{{ email|default('', true) }}"
+                    placeholder="Enter your email" autocomplete="username">
+                <label for="password">Password</label>
+                <input id="password" type="password" name="password" placeholder="Enter your password"
+                    autocomplete="current-password">
+                <button class="btn" style="width:100%" type="submit">Log in</button>
+            </form>
+        </section>
+    </main>
+</body>
+
+</html>

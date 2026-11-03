@@ -1,0 +1,22 @@
+<!-- Display IDP info, errors, back nav and save btn-->
+
+{% extends "base.html" %}
+{% from "_macros.html" import idpDetail %}
+{% block title %}IDP Details | 4RENO{% endblock %}
+{% block content %}
+
+<p><a href="{{ backUrl }}">&lsaquo; Back to results</a></p>
+{% if not idp %}
+<div class="banner err">{{ error }}</div>
+<p><a class="btn outline" href="{{ backUrl }}">Back to results</a></p>
+{% else %}
+{% call idpDetail(idp) %}
+<form method="post" action="{{ url_for('save_favourite.saveRoute', idpID=idp.idpID) }}" style="margin-top:16px">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn" type="submit">Save to Favourite List</button>
+    <a class="btn outline" href="{{ backUrl }}">Back</a>
+</form>
+
+{% endcall %}
+{% endif %}
+{% endblock %}

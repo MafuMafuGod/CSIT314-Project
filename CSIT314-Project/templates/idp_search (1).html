@@ -1,0 +1,47 @@
+<!-- Search IDPs page
+ Shows keyword/category filters, category chips, result cards, and no-match/error states -->
+
+{% extends "base.html" %}
+{% from "_macros.html" import idpCard %}
+{% block title %}Interior Designers | 4RENO{% endblock %}
+{% block content %}
+
+<h1>Interior Designer Projects</h1>
+<form method="get" action="{{ url_for('search_idp.searchPage') }}" novalidate>
+    <div class="search-row">
+        <div><label for="keyword">Keyword</label>
+            <input id="keyword" type="text" name="keyword" value="{{ keyword }}" placeholder="Enter a keyword"
+                maxlength="100">
+        </div>
+        <div><label for="category">Category</label>
+            <select id="category" name="category">
+                <option value="">All categories</option>
+                {% for c in categories %}<option {{ 'selected' if c==category }}>{{ c }}</option>{% endfor %}
+            </select>
+        </div>
+        <button class="btn" type="submit">Search</button>
+    </div>
+    {% if error %}
+    <p class="errtext">{{ error }}</p>
+    {% endif %}
+</form>
+
+<div class="chips">
+    {% for c in categories %}<a class="chip {{ 'active' if c == category }}"
+        href="{{ url_for('search_idp.searchPage', category=c) }}">{{ c }}</a>{% endfor %}
+</div>
+
+{% if searched %}
+{% if results %}
+<p><strong>{{ results|length }} project{{ '' if results|length == 1 else 's' }} found</strong></p>
+<div class="cards">
+    {% for idp in results %}{{ idpCard(idp, 'View Details', url_for('view_idp.viewIdpPage', idpID=idp.idpID)) }}{%
+    endfor %}
+</div>
+{% else %}
+<p><strong>0 projects found</strong></p>
+<div class="banner info">No matching IDPs were found. Try a different keyword or category.</div>
+{% endif %}
+{% endif %}
+
+{% endblock %}

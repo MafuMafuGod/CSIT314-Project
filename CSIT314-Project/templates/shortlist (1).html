@@ -1,0 +1,35 @@
+<!-- Shortlist search page
+ Displays search field and saved-project results/empty/no-match messages -->
+
+{% extends "base.html" %}
+{% from "_macros.html" import idpCard %}
+{% block title %}My Shortlist | 4RENO{% endblock %}
+{% block content %}
+
+<h1 style="text-align:left">My Shortlist</h1>
+<form method="get" action="{{ url_for('search_shortlist.shortlistPage') }}" novalidate>
+    <div class="search-row">
+        <div><label for="keyword">Search saved projects</label>
+            <input id="keyword" type="text" name="keyword" value="{{ keyword }}" placeholder="Enter a keyword"
+                maxlength="100">
+        </div>
+        <button class="btn" type="submit">Search</button>
+    </div>
+    {% if error %}<p class="errtext">{{ error }}</p>{% endif %}
+</form>
+{% if emptyShortlist %}
+<div class="banner info">Your Shortlist is empty. Save projects from Search IDPs to see them here.</div>
+<p><a class="btn outline" href="{{ url_for('search_idp.searchPage') }}">Browse IDPs</a></p>
+{% elif searched %}
+{% if results %}
+<p><strong>{{ results|length }} saved project{{ '' if results|length == 1 else 's' }} match</strong></p>
+<div class="cards">
+    {% for idp in results %}{{ idpCard(idp, 'View Project', url_for('view_shortlisted.viewShortlistedPage',
+    idpID=idp.idpID)) }}{% endfor %}
+</div>
+{% else %}
+<div class="banner info">No matching saved projects were found.</div>
+{% endif %}
+{% endif %}
+
+{% endblock %}
