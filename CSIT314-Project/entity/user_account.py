@@ -1,4 +1,4 @@
-"""«Entity» UserAccount — used by #06 / #31 Login, #42 Create User Account, #43 View User Account."""
+"""«Entity» UserAccount — used by #06 / #31 / #70 Login, #42 Create User Account, #43 View User Account."""
 from typing import Optional
 
 
@@ -26,16 +26,16 @@ class UserAccount:
         """Account details for display (password is never included)."""
         return {"name": self._name, "u": self._u, "profile": self._profile, "status": self._status}
 
-    # ---- #06 User Login, #31 Customer Login ------------------------------
+    # ---- #06 / #31 / #70 Login ----------------------------------------------
     @classmethod
     def userAccountLogin(cls, u: str, p: str) -> bool:
-        """#06 step 5 / #31 step 6: verify credentials against the stored accounts."""
+        """#06 step 5 / #31 step 6 / #70: verify credentials against the stored accounts."""
         account = cls._findAccount(u)
         return account is not None and account._p == p
 
     @classmethod
     def getProfile(cls, u: str) -> str:
-        """#06 step 6 / #31 step 7: return the user's assigned profile."""
+        """#06 step 6 / #31 step 7 / #70: return the user's assigned profile."""
         account = cls._findAccount(u)
         return account._profile if account else ""
 

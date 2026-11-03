@@ -6,3 +6,4 @@ from control.view_user_account_controller import ViewUserAccountController
 from control.view_idp_view_count_controller import ViewIDPViewCountController
 from control.view_idp_shortlist_count_controller import ViewIDPShortlistCountController
 from control.search_idp_controller import SearchIDPController
+from control.view_idp_controller import ViewIDPController

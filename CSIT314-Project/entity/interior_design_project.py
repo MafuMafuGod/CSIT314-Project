@@ -1,4 +1,5 @@
-"""«Entity» InteriorDesignProject — used by #32 Search IDPs, #40, #41 (Matthew) and portfolio #52-#56.
+"""«Entity» InteriorDesignProject — used by #32 Search IDPs, #33 View IDP Details,
+#40, #41 (Matthew) and portfolio #52-#56.
 
 Tracking hooks for other use cases (call these through a Controller, don't edit the counts directly):
   #33 View IDP details       -> InteriorDesignProject.incrementViewCount(idpID)
@@ -65,6 +66,16 @@ class InteriorDesignProject:
         return [idp._toCard() for idp in cls._idps
                 if (not keyword or keyword in idp._title.lower() or keyword in idp._description.lower())
                 and (not category or idp._category == category)]
+
+    # ---- #33 View IDP Details --------------------------------------------------
+    @classmethod
+    def findIDPByID(cls, idpID: int) -> dict:
+        """#33 step 3: the selected IDP's details. {} if it does not exist (3a)."""
+        idp = cls._findIDP(idpID)
+        if idp is None:
+            return {}
+        return {"idpID": idp._idpID, "title": idp._title, "description": idp._description,
+                "category": idp._category, "imageURL": idp._imageURL}
 
     # ---- #40 step 2: the ID's IDPs with their view counts --------------------
     @classmethod

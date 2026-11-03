@@ -1,4 +1,4 @@
-"""«Control» UserLoginController — #06 User Login, #31 Customer Login."""
+"""«Control» UserLoginController — #06 User Login, #31 Customer Login, #70 Platform Admin Login."""
 from entity import UserAccount
 
 

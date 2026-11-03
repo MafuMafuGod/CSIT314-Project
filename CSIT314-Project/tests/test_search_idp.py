@@ -121,4 +121,5 @@ class TestBoundary:
         assert "No matching IDPs were found" in html
 
     def test_view_details_link_works(self, client):                       # step 8 -> #33
-        assert client.get("/idp/2").status_code == 200
+        html = client.get("/idp/2").get_data(as_text=True)
+        assert "Punggol Condo Kitchen" in html
