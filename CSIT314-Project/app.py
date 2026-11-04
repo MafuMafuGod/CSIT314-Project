@@ -7,6 +7,7 @@ Use cases in this code:
   #32 Search IDPs  #33 View IDP Details
   #34 Save IDP  #35 Search Shortlist  #36 View Shortlisted IDP  #37 Customer Logout
   #40 / #41 IDP view and shortlist count (Matthew)
+  #52-#56 Current project portfolio  #57-#61 Past project portfolio (Create / View / Update / Delete / Search)
   #42 Create  #43 View  #44 Update  #45 Suspend  #46 Search  User Account
   #47 Create  #48 View  #49 Update  #50 Suspend  #51 Search  User Profile
 
@@ -103,7 +104,7 @@ def requireAdmin():
 
 @app.before_request
 def requireDesigner():
-    """Precondition for #09-#11 and #40/#41: only a logged-in ID may open /designer pages."""
+    """Precondition for #09-#11, #40/#41 and #52-#61: only a logged-in ID may open /designer pages."""
     if request.path.startswith("/designer"):
         if not session.get("u"):
             return redirect(url_for("login.loginPage"))

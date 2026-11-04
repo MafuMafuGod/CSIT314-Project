@@ -1,0 +1,87 @@
+<!-- «Boundary» CreatePortfolioPage (#52 / #57, mode = "create") and
+ UpdatePortfolioPage (#54 / #59, mode = "update", filled with the existing information).
+ Field errors: #52 / #57 5a and #54 / #59 6a. Save failed: #54 7a. -->
+
+{% extends "base.html" %}
+{% set creating = mode == 'create' %}
+{% set heading = ('Create ' if creating else 'Edit ') ~ kindLabels[kind] ~ ' Portfolio' %}
+{% block title %}{{ heading }} | 4RENO{% endblock %}
+{% block content %}
+
+{% macro fieldError(name) %}{% if fieldErrors[name] %}<p class="adm-error">{{ fieldErrors[name] }}</p>{% endif %}{%
+endmacro %}
+
+{% if creating %}
+<a class="adm-back" href="{{ url_for('portfolio.portfolioPage', kind=kind) }}">&lsaquo; Back to portfolio</a>
+{% else %}
+<a class="adm-back" href="{{ url_for('view_portfolio.viewProjectPage', kind=kind, idpID=idpID) }}">&lsaquo; Back to
+    project</a>
+{% endif %}
+<h1 style="margin-top:0;text-align:left">{{ heading }}</h1>
+
+{% if error %}<div class="banner err" role="alert">{{ error }}</div>
+{% elif fieldErrors %}<div class="banner err" role="alert">Please correct the highlighted fields.</div>{% endif %}
+
+<form class="formbox adm-form" method="post" novalidate
+    action="{{ url_for('create_portfolio.openCreatePage', kind=kind) if creating else url_for('update_portfolio.editProjectPage', kind=kind, idpID=idpID) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="adm-field">
+        <label for="title">Project title</label>
+        <input id="title" type="text" name="title" maxlength="100" value="{{ form.title }}"
+            placeholder="e.g. Tampines HDB Scandinavian Makeover" class="{{ 'bad' if fieldErrors.title }}">
+        {{ fieldError('title') }}
+    </div>
+
+    <div class="adm-two">
+        <div class="adm-field">
+            <label for="category">Category <span class="sub">(optional)</span></label>
+            <input id="category" type="text" name="category" maxlength="50" value="{{ form.category }}"
+                list="category-list" placeholder="e.g. Living Room" class="{{ 'bad' if fieldErrors.category }}">
+            <datalist id="category-list">{% for c in categories %}<option value="{{ c }}">{% endfor %}</datalist>
+            {{ fieldError('category') }}
+        </div>
+        {% if kind == 'past' %}
+        <div class="adm-field">
+            <label for="completionDate">Completion date</label>
+            <input id="completionDate" type="date" name="completionDate" value="{{ form.completionDate }}"
+                class="{{ 'bad' if fieldErrors.completionDate }}">
+            {{ fieldError('completionDate') }}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="adm-field">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" maxlength="1000" rows="4"
+            placeholder="What the client wanted and what was done" class="{{ 'bad' if fieldErrors.description }}">{{ form.description }}</textarea>
+        {{ fieldError('description') }}
+    </div>
+
+    <div class="adm-two">
+        <div class="adm-field">
+            <label for="designs">Designs</label>
+            <textarea id="designs" name="designs" maxlength="500" rows="4"
+                placeholder="Style, layout and key design ideas" class="{{ 'bad' if fieldErrors.designs }}">{{ form.designs }}</textarea>
+            {{ fieldError('designs') }}
+        </div>
+        <div class="adm-field">
+            <label for="materials">Materials</label>
+            <textarea id="materials" name="materials" maxlength="500" rows="4"
+                placeholder="e.g. Oak veneer, quartz countertop" class="{{ 'bad' if fieldErrors.materials }}">{{ form.materials }}</textarea>
+            {{ fieldError('materials') }}
+        </div>
+    </div>
+
+    <div class="adm-buttons">
+        <a class="btn outline"
+            href="{{ url_for('portfolio.portfolioPage', kind=kind) if creating else url_for('view_portfolio.viewProjectPage', kind=kind, idpID=idpID) }}">Cancel</a>
+        <button type="submit">{{ 'Create Portfolio' if creating else 'Save' }}</button>
+    </div>
+</form>
+
+<style>
+    .adm-field textarea { margin-bottom: 0; }
+    .adm-field textarea.bad { border-color: #c0392b; background: #fdf2f1; }
+</style>
+{% endblock %}

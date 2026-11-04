@@ -1,0 +1,18 @@
+<!-- Shared by the portfolio pages (#52-#61) -->
+
+{# Delete pop-up: #55 / #60 steps 2-3. Cancel closes it (3a) and nothing is deleted. #}
+{% macro deleteModal(kind, project) %}
+<div id="delete-{{ project.idpID }}" class="adm-modal">
+    <form class="adm-modal-box" method="post"
+        action="{{ url_for('delete_portfolio.deleteProjectRoute', kind=kind, idpID=project.idpID) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <h2>Delete "{{ project.title }}"?</h2>
+        <p class="sub">This removes the project, its designs and materials from your portfolio.
+            Customers will no longer be able to find it. This cannot be undone.</p>
+        <div class="adm-buttons">
+            <a class="btn outline" href="#">Cancel</a>
+            <button type="submit">Delete project</button>
+        </div>
+    </form>
+</div>
+{% endmacro %}

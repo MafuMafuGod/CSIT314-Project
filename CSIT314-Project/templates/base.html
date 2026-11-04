@@ -20,6 +20,8 @@
 
     <nav class="primary-nav" aria-label="Main navigation">
       {% if session.get('profile') == 'designer' %}
+      <a href="{{ url_for('portfolio.portfolioPage') }}" class="{{ 'active' if active == 'portfolio' else '' }}">My
+        Portfolio</a>
       <a href="{{ url_for('company_profile.viewCompanyProfilePage') }}"
         class="{{ 'active' if active == 'company' else '' }}">View Company Profile</a>
       <a href="{{ url_for('idp_interest.viewCountPage') }}" class="{{ 'active' if active == 'interest' else '' }}">IDP
