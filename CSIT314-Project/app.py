@@ -5,6 +5,7 @@ Use cases in this code:
   #06 User Login  #07 User Logout  #31 Customer Login  #70 Platform Admin Login
   #09 Create  #10 View  #11 Update  Company Profile (Matthew)
   #32 Search IDPs  #33 View IDP Details
+  #34 Save IDP  #35 Search Shortlist  #36 View Shortlisted IDP  #37 Customer Logout
   #40 / #41 IDP view and shortlist count (Matthew)
   #42 Create  #43 View  #44 Update  #45 Suspend  #46 Search  User Account
   #47 Create  #48 View  #49 Update  #50 Suspend  #51 Search  User Profile
@@ -72,9 +73,23 @@ def endSuspendedSessions():
 
 @app.before_request
 def requireLogin():
-    """Precondition for #07: only a logged-in user can log out."""
+    """Precondition for #07 / #37: only a logged-in user can log out.
+    #37 2a: if the session has already expired, the user is treated as logged out and
+    sent to the login page."""
     if request.path == "/logout" and not session.get("u"):
         return redirect(url_for("login.loginPage"))
+
+
+@app.before_request
+def requireCustomer():
+    """Precondition for #34-#36: only a logged-in Customer has a Shortlist."""
+    if request.path.startswith("/shortlist") or (request.path.startswith("/idp/") and request.path.endswith("/save")):
+        if not session.get("u"):
+            flash("Please log in to use your Shortlist.", "info")
+            return redirect(url_for("login.loginPage"))
+        if session.get("profile") != "customer":
+            flash("Only Customers have a Shortlist.", "err")
+            return redirect(url_for("home.displayHome"))
 
 
 @app.before_request

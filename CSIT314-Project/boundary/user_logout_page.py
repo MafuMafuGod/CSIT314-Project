@@ -1,4 +1,4 @@
-"""«Boundary» UserLogoutPage — #07 User Logout
+"""«Boundary» UserLogoutPage — #07 User Logout, #37 Customer Logout
 (no class: base.html Log Out button, logged_out.html + route functions)."""
 from flask import Blueprint, render_template
 

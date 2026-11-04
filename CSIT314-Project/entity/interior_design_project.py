@@ -1,5 +1,5 @@
 """«Entity» InteriorDesignProject — used by #32 Search IDPs, #33 View IDP Details,
-#40, #41 (Matthew) and portfolio #52-#56.
+#34 / #35 / #36 Shortlist, #40, #41 (Matthew) and portfolio #52-#56.
 
 Tracking hooks for other use cases (call these through a Controller, don't edit the counts directly):
   #33 View IDP details       -> InteriorDesignProject.incrementViewCount(idpID)
@@ -46,6 +46,13 @@ class InteriorDesignProject:
                 for idp in cls._getIDPsByDesigner(designerU)]
         return sorted(rows, key=lambda r: r[field], reverse=True)
 
+    def _matches(self, keyword: str, category: str) -> bool:
+        """Title or description contains the keyword (not case-sensitive) and the category
+        matches. Empty keyword / category = "any". Shared by #32 and #35."""
+        keyword = keyword.lower()
+        return ((not keyword or keyword in self._title.lower() or keyword in self._description.lower())
+                and (not category or self._category == category))
+
     def _toCard(self) -> dict:
         """Fields needed by a search result card."""
         return {"idpID": self._idpID, "title": self._title, "category": self._category,
@@ -59,13 +66,15 @@ class InteriorDesignProject:
 
     @classmethod
     def findMatchingIDPs(cls, keyword: str, category: str) -> list:
-        """#32 step 6: IDPs whose title or description contains the keyword
-        (case-insensitive) and whose category matches. An empty keyword or
-        category means "any". Returns [] if nothing matches (6a)."""
-        keyword = keyword.lower()
-        return [idp._toCard() for idp in cls._idps
-                if (not keyword or keyword in idp._title.lower() or keyword in idp._description.lower())
-                and (not category or idp._category == category)]
+        """#32 step 6: IDPs matching the keyword and category. [] if nothing matches (6a)."""
+        return [idp._toCard() for idp in cls._idps if idp._matches(keyword, category)]
+
+    # ---- #35 Search Shortlist ------------------------------------------------
+    @classmethod
+    def getIDPCards(cls, idpIDs: list, keyword: str = "") -> list:
+        """#35 steps 5-6: cards for the given IDPs (e.g. a Customer's Shortlist), keeping only
+        those that match the keyword. IDPs that no longer exist are left out."""
+        return [idp._toCard() for idp in cls._idps if idp._idpID in idpIDs and idp._matches(keyword, "")]
 
     # ---- #33 View IDP Details --------------------------------------------------
     @classmethod

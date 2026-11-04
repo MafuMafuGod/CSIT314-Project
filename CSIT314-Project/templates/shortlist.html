@@ -22,7 +22,7 @@
 <p><a class="btn outline" href="{{ url_for('search_idp.searchPage') }}">Browse IDPs</a></p>
 {% elif searched %}
 {% if results %}
-<p><strong>{{ results|length }} saved project{{ '' if results|length == 1 else 's' }} match</strong></p>
+<p><strong>{{ results|length }} saved project{{ '' if results|length == 1 else 's' }}{{ ' match' if keyword }}</strong></p>
 <div class="cards">
     {% for idp in results %}{{ idpCard(idp, 'View Project', url_for('view_shortlisted.viewShortlistedPage',
     idpID=idp.idpID)) }}{% endfor %}

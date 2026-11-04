@@ -13,8 +13,11 @@ from boundary.idp_interest_page import idp_interest
 from boundary.search_idp_page import search_idp
 from boundary.view_idp_page import view_idp
 from boundary.company_profile_page import company_profile
-from boundary.placeholder_pages import home, search_shortlist, save_favourite
+from boundary.save_idp_page import save_favourite
+from boundary.search_shortlist_page import search_shortlist
+from boundary.view_shortlisted_idp_page import view_shortlisted
+from boundary.placeholder_pages import home
 
 ALL_BLUEPRINTS = (login, logout, create_account, user_management, update_account, suspend_account,
                   create_profile, view_profile, update_profile, suspend_profile,
-                  idp_interest, search_idp, view_idp, company_profile, home, search_shortlist, save_favourite)
+                  idp_interest, search_idp, view_idp, company_profile, home, save_favourite, search_shortlist, view_shortlisted)
