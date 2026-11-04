@@ -1,0 +1,85 @@
+<!-- ViewUserProfilePage (#48) & SuspendUserProfilePage (#50)
+Profile details, what the role can do, users with this profile, suspend pop-up -->
+
+{% extends "base.html" %}
+{% block title %}{{ profile.name }} | 4RENO{% endblock %}
+{% block content %}
+{% from "_admin_macros.html" import statusBadge, permissionList %}
+{% set isSuspended = profile.status == 'suspended' %}
+
+<a class="adm-back" href="/admin/profiles">&lsaquo; Back to profiles</a>
+
+<div class="adm-title-row">
+    <div>
+        <h1>{{ profile.name }}</h1>
+        <p class="sub">
+            {{ profile.description or 'No description' }} &middot; Created {{ profile.created or '—' }}
+            {% if isSuspended %} &middot; Suspended {{ profile.suspendedOn or '' }}
+            &middot; Reason: {{ profile.suspendReason or 'none given' }}{% endif %}
+        </p>
+    </div>
+
+    <div class="adm-actions">
+        {{ statusBadge(profile.status) }}
+        <a class="btn" href="/admin/profiles/edit/{{ profile.name | urlencode }}">Edit</a>
+        {% if not isSuspended %}
+        <a class="btn outline" href="#suspend-modal">Suspend</a>
+        {% endif %}
+    </div>
+</div>
+
+<section class="adm-card">
+    <h2>{{ 'Permissions (not in effect while suspended)' if isSuspended else 'What this profile can do' }}</h2>
+    {{ permissionList(permissionGroups, profile.permissions) }}
+</section>
+
+<section class="adm-card">
+    <h2>Users with this profile ({{ profileUsers | length }})
+        <a class="adm-link-right" href="{{ url_for('user_management.userManagementPage', profile=profile.key) }}">View
+            all in Users</a>
+    </h2>
+    {% if profileUsers %}
+    <table class="adm-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in profileUsers %}
+            <tr>
+                <td class="strong"><a href="{{ url_for('user_management.viewUserAccount', u=u.u) }}">{{ u.name }}</a>
+                </td>
+                <td>{{ u.u }}</td>
+                <td>{{ 'Blocked' if isSuspended else (u.status | capitalize) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="sub">No users have this profile yet.</p>
+    {% endif %}
+</section>
+
+<!-- #50: suspend pop-up -->
+<div id="suspend-modal" class="adm-modal">
+    <form class="adm-modal-box" method="post" action="/admin/profiles/suspend/{{ profile.name | urlencode }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <h2>Suspend {{ profile.name }}?</h2>
+        <p class="sub">All {{ profileUsers | length }} users with this profile will be signed out immediately and cannot
+            sign in
+            while it is suspended. The profile cannot be assigned to new users. Its permissions are kept.</p>
+
+        <label for="reason">Reason (optional)</label>
+        <textarea id="reason" name="reason" maxlength="300"></textarea>
+        <p class="sub" style="margin:0 0 16px;font-size:.85rem">Recorded in the audit log.</p>
+
+        <div class="adm-buttons">
+            <a class="btn outline" href="#">Cancel</a>
+            <button type="submit">Suspend profile</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

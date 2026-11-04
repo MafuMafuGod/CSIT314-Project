@@ -1,0 +1,45 @@
+<!-- Helpers shared by User Admin pages -->
+
+{# Profile names come from the app (profileLabels), not from here, so there is only one list. #}
+{# Coloured status label, e.g. Active / Suspended #}
+{% macro statusBadge(status) %}
+<span class="badge {{ (status or 'active') | lower }}">{{ (status or 'active') | capitalize }}</span>
+{% endmacro %}
+
+{# Tick boxes grouped in columns. "selected" is the list of ticked permissions. #}
+{% macro permissionCheckboxes(groups, selected)%}
+<fieldset class="adm-perms-box">
+    <legend>Permissions</legend>
+    <div class="adm-perms">
+        {% for group, perms in groups.items()%}
+        <div>
+            <strong>{{ group }}</strong>
+            {% for p in perms %}
+            <label class="adm-check">
+                <input type="checkbox" name="permissions" value="{{ p }}" {{ 'checked' if p in selected }}>
+                {{ p }}
+            </label>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+</fieldset>
+{% endmacro %}
+
+{# Read-only list: "Allowed" or "Not allowed" for every permission #}
+{% macro permissionList(groups, selected) %}
+<div class="adm-perms">
+    {% for group, perms in groups.items() %}
+    <div>
+        <strong>{{ group }}</strong>
+        {% for p in perms %}
+        <div class="adm-perm-row">
+            <span>{{ p }}</span>
+            {% if p in selected %}<span class="yes">&#10003; Allowed</span>{% else %}<span class="no">&mdash; Not
+                allowed</span>{% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+{% endmacro %}

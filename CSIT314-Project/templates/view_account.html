@@ -1,26 +1,91 @@
-<!-- «Boundary» ViewUserAccountPage — #43 step 3
- One account's details (the password is never shown).
- PLACEHOLDER: replace with the #43 owner's own template if they have one. -->
+<!-- ViewUserAccountPage (#43) & SuspendUserAccountPage (#45) 
+ Account details, status, edit button, suspend pop-up -->
 
 {% extends "base.html" %}
 {% block title %}{{ userAccount.name }} | 4RENO{% endblock %}
 {% block content %}
+{% from "_admin_macros.html" import statusBadge %}
+{% set isSuspended = userAccount.status == 'suspended' %}
 
-<style>
-    .va-box { max-width: 520px; background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 20px; }
-    .va-row { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px solid #eee; }
-    .va-row:last-child { border-bottom: 0; }
-    .va-label { color: #666; }
-    .va-value { font-weight: 600; text-align: right; word-break: break-all; }
-</style>
+<a class="adm-back" href="{{ url_for('user_management.userManagementPage') }}">&lsaquo; Back to users</a>
 
-<p><a href="{{ url_for('user_management.userManagementPage') }}">&lsaquo; Back to User Management</a></p>
-<h1 style="text-align:left">User Account Details</h1>
+<div class="adm-title-row">
+    <div class="adm-who">
+        <div class="adm-avatar">{{ userAccount.name[:1] }}</div>
+        <div>
+            <h1>{{ userAccount.name }}</h1>
+            <p class="sub">{{ userAccount.u }}</p>
+        </div>
+    </div>
 
-<div class="va-box">
-    <div class="va-row"><span class="va-label">Name</span><span class="va-value">{{ userAccount.name }}</span></div>
-    <div class="va-row"><span class="va-label">Email</span><span class="va-value">{{ userAccount.u }}</span></div>
-    <div class="va-row"><span class="va-label">Profile</span><span class="va-value">{{ profileLabels.get(userAccount.profile, userAccount.profile) }}</span></div>
-    <div class="va-row"><span class="va-label">Status</span><span class="va-value">{{ userAccount.status | capitalize }}</span></div>
+    <div class="adm-actions">
+        {{ statusBadge(userAccount.status) }}
+        <a class="btn" href="/admin/users/edit/{{ userAccount.u | urlencode }}">Edit</a>
+        {% if not isSuspended %}
+        <!-- Opens the pop-up below -->
+        <a class="btn outline" href="#suspend-modal">Suspend</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="adm-grid">
+    <section class="adm-card">
+        <h2>Account Details</h2>
+        <dl class="adm-dl">
+            <dt>Full name</dt>
+            <dd>{{ userAccount.name }}</dd>
+            <dt>Email</dt>
+            <dd>{{ userAccount.u }}</dd>
+            <dt>User ID</dt>
+            <dd>{{ userAccount.userID or '-' }}</dd>
+            <dt>Created</dt>
+            <dd>{{ userAccount.created_at or '-' }}</dd>
+        </dl>
+    </section>
+
+    <section class="adm-card">
+        <h2>Status</h2>
+        <dl class="adm-dl">
+            <dt>Account status</dt>
+            <dd>{{ userAccount.status | capitalize }}</dd>
+            {% if isSuspended %}
+            <dt>Suspended on</dt>
+            <dd>{{ userAccount.suspendedOn or '—' }}</dd>
+            <dt>Reason</dt>
+            <dd>{{ userAccount.suspendReason or 'No reason given' }}</dd>
+            {% endif %}
+            <dt>Last sign-in</dt>
+            <dd>{{ userAccount.lastSignIn or '—' }}</dd>
+        </dl>
+    </section>
+</div>
+
+<section class="adm-card">
+    <h2>Profile and permissions</h2>
+    <dl class="adm-dl">
+        <dt>Profile</dt>
+        <dd> {{ profileLabels.get(userAccount.profile, userAccount.profile) }}</dd>
+        <dt>Permissions</dt>
+        <dd>{{ userAccount.permissions | join(', ') if userAccount.permissions else '—' }}</dd>
+    </dl>
+</section>
+
+<!-- #45: Suspend pop-up -->
+<div id="suspend-modal" class="adm-modal">
+    <form class="adm-modal-box" method="post" action="/admin/users/suspend/{{ userAccount.u | urlencode }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <h2>Suspend {{ userAccount.name }}?</h2>
+        <p class="sub">They will be signed out immediately and cannot sign in until the account is reactivated. Their
+            data is kept.</p>
+
+        <label for="reason">Reason (optional)</label>
+        <textarea id="reason" name="reason" maxlength="300"></textarea>
+        <p class="sub" style="margin:0 0 16px;font-size:.85rem">Recorded in the audit log.</p>
+
+        <div class="adm-buttons">
+            <a class="btn outline" href="#">Cancel</a>
+            <button type="submit">Suspend account</button>
+        </div>
+    </form>
 </div>
 {% endblock %}

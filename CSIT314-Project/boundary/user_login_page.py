@@ -3,7 +3,7 @@
 from flask import Blueprint, render_template, request, session, flash
 
 from control import UserLoginController
-from boundary.profiles import PROFILE_LABELS
+from boundary.profiles import getProfileLabels
 
 login = Blueprint("login", __name__)
 
@@ -34,7 +34,7 @@ def displayLoginError(u: str) -> str:                                    # 3a
 
 
 def displayLoginSuccess(profile: str) -> str:                               # step 6
-    flash(f"Logged in successfully as {PROFILE_LABELS.get(profile, profile)}.", "ok")
+    flash(f"Logged in successfully as {getProfileLabels().get(profile, profile)}.", "ok")
     return render_template("home.html", categories=[], featured=[])
 
 

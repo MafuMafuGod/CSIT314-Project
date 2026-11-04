@@ -1,45 +1,88 @@
-<!-- «Boundary» ViewUserAccountPage — #43 step 1
- User Management list: every account, with a link to view its details.
- PLACEHOLDER: replace with the #43 owner's own template if they have one. -->
+<!-- ViewUserAccountPage (#43) & SearchUserAccountsPage (#46)
+  User list, search boxes, "No user accounts found" message -->
 
 {% extends "base.html" %}
-{% block title %}User Management | 4RENO{% endblock %}
+{% block title %}Users | 4RENO{% endblock %}
 {% block content %}
+{% from "_admin_macros.html" import statusBadge %}
 
-<style>
-    .um-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
-    .um-table { width: 100%; border-collapse: collapse; margin-top: 16px; background: #fff; }
-    .um-table th, .um-table td { padding: 10px 12px; border-bottom: 1px solid #e5e5e5; text-align: left; }
-    .um-table th { font-size: .85rem; text-transform: uppercase; letter-spacing: .03em; color: #666; }
-    .um-status.suspended { color: #9c2929; }
-    .um-wrap { overflow-x: auto; }
-</style>
-
-<div class="um-head">
-    <h1 style="text-align:left;margin:0">User Management</h1>
-    <a class="btn" href="{{ url_for('create_account.createAccountPage') }}">Create New User</a>
+{# Read what the admin typed in the search boxes (empty if nothing) #}
+{% set q = request.args.get('q', '') %}
+{% set status = request.args.get('status', '') %}
+{% set profile = request.args.get('profile', '') %}
+{% set searching = q or status or profile %}
+<div class="adm-head">
+    <div>
+        <h1>User Management</h1>
+        <p class="sub">Create, view, update, suspend and search user accounts.</p>
+    </div>
+    <a class="btn" href="{{ url_for('create_account.createAccountPage') }}">Create user</a>
 </div>
 
-{% if not userAccounts %}
-<div class="banner info">No user accounts found.</div>
+{% set adm_tab = 'users' %}
+{% include "_admin_tabs.html" %}
+
+<!-- #46: search form (sent with GET so the words stay in the web address) -->
+<form class="adm-filters" method="get" action="{{ url_for('user_management.userManagementPage') }}">
+    <input type="search" name="q" value="{{ q }}" placeholder="Search by name or email" aria-label="Search users">
+    <select name="status" aria-label="Filter by status">
+        <option value="">All statuses</option>
+        {% for s in ['active', 'suspended'] %}
+        <option value="{{ s }}" {{ 'selected' if status==s }}>{{ s | capitalize }}</option>
+        {% endfor %}
+    </select>
+    <select name="profile" aria-label="Filter by profile">
+        <option value="">All profiles</option>
+        {% for value, label in profileLabels.items() %}
+        <option value="{{ value }}" {{ 'selected' if profile==value }}>{{ label }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Search</button>
+</form>
+
+{% if userAccounts %}
+<div class="adm-count">
+    <span>Showing {{ userAccounts | length }} user account{{ '' if userAccounts | length == 1 else 's' }}</span>
+    {% if searching %}<a href="{{ url_for('user_management.userManagementPage') }}">Clear filters</a>{% endif %}
+</div>
+
+<table class="adm-table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Profile</th>
+            <th>Status</th>
+            <th>Last sign-in</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for a in userAccounts%}
+        <tr>
+            <td class="strong"><a href="{{ url_for('user_management.viewUserAccount', u=a.u) }}">{{ a.name}}</a></td>
+            <td>{{ a.u}}</td>
+            <td>{{ profileLabels.get(a.profile, 'Unknown') }}</td>
+            <td>{{ statusBadge(a.status) }}</td>
+            <td>{{ a.lastSignIn or '-' }}</td>
+        </tr>
+        {% endfor%}
+    </tbody>
+</table>
+
+{% elif searching %}
+<!-- $46 alternative flow 7a: no results matched the search -->
+<div class="adm-empty">
+    <h2>No user accounts found</h2>
+    <p>Check the spelling, try part of the name or email, or remove a filter.</p>
+    <a class="btn" href="{{ url_for('user_management.userManagementPage') }}">Clear search and filters</a>
+</div>
+
 {% else %}
-<div class="um-wrap">
-    <table class="um-table">
-        <thead>
-            <tr><th>Name</th><th>Email</th><th>Profile</th><th>Status</th><th></th></tr>
-        </thead>
-        <tbody>
-            {% for a in userAccounts %}
-            <tr>
-                <td>{{ a.name }}</td>
-                <td>{{ a.u }}</td>
-                <td>{{ profileLabels.get(a.profile, a.profile) }}</td>
-                <td class="um-status {{ a.status }}">{{ a.status | capitalize }}</td>
-                <td><a class="btn outline" href="{{ url_for('user_management.viewUserAccount', u=a.u) }}">View</a></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="adm-empty">
+    <h2>No user accounts yet</h2>
+    <p>Create the first user account to get started.</p>
+    <a class="btn" href="{{ url_for('create_account.createAccountPage') }}">Create user</a>
 </div>
 {% endif %}
 {% endblock %}

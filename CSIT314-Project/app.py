@@ -1,10 +1,12 @@
 """
-4RENO - Use Case #06: User Login
-       Use Case #07: User Logout
-       Use Case #42: Create User Account
-       Use Case #43: View User Account
-       Use Case #40: Track and display IDP view count       (Matthew)
-       Use Case #41: Track and display IDP shortlist count  (Matthew)
+4RENO - Interior Design Project (IDP) platform
+
+Use cases in this code:
+  #06 User Login  #07 User Logout  #31 Customer Login  #70 Platform Admin Login
+  #32 Search IDPs  #33 View IDP Details
+  #40 / #41 IDP view and shortlist count (Matthew)
+  #42 Create  #43 View  #44 Update  #45 Suspend  #46 Search  User Account
+  #47 Create  #48 View  #49 Update  #50 Suspend  #51 Search  User Profile
 
 Project layout (one file per BCE class / page):
   entity/     «Entity»   classes - own the data, answer questions that need stored data
@@ -32,13 +34,15 @@ import secrets
 from flask import Flask, request, session, abort, flash, redirect, url_for
 
 from boundary import ALL_BLUEPRINTS
-from boundary.profiles import PROFILE_LABELS
+from boundary.profiles import getProfileLabels
+from control import SessionCheckController
 
 app = Flask(__name__)
 app.secret_key = "dev-secret-change-me"
 
 
-# Infrastructure (not part of the BCE diagrams): login guard, admin guard, designer guard + CSRF protection
+# Infrastructure (not part of the BCE diagrams): session check, login guard, admin guard,
+# designer guard + CSRF protection
 
 @app.context_processor
 def inject_csrf():
@@ -52,7 +56,17 @@ def inject_csrf():
 @app.context_processor
 def inject_profile_labels():
     """Lets every template show "Interior Designer" instead of "designer"."""
-    return {"profileLabels": PROFILE_LABELS}
+    return {"profileLabels": getProfileLabels()}
+
+
+@app.before_request
+def endSuspendedSessions():
+    """#45 step 5 / #50 step 4: a user who was suspended (or whose profile was suspended)
+    while logged in is signed out on their next page load."""
+    if session.get("u") and SessionCheckController().isSessionBlocked(session["u"], session.get("profile", "")):
+        session.clear()
+        flash("Your account has been suspended. Please contact the User Admin.", "err")
+        return redirect(url_for("login.loginPage"))
 
 
 @app.before_request
@@ -64,7 +78,8 @@ def requireLogin():
 
 @app.before_request
 def requireAdmin():
-    """Precondition for #42/#43: only a logged-in User Admin may open /admin pages."""
+    """Precondition for #42-#51 (and #45 6b / #50 2a "no permission"): only a logged-in
+    User Admin may open /admin pages."""
     if request.path.startswith("/admin") and session.get("profile") != "admin":
         flash("You do not have permission to access User Management.", "err")
         return redirect(url_for("home.displayHome"))

@@ -40,6 +40,10 @@
                 <h1>Account Login</h1>
 
                 {% if error %}<div class="banner err" role="alert">{{ error }}</div>{% endif %}
+                {# Messages sent before arriving here, e.g. "Your account has been suspended" (#45 / #50) #}
+                {% for category, message in get_flashed_messages(with_categories=true) %}
+                <div class="banner {{ category }}" role="alert">{{ message }}</div>
+                {% endfor %}
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                 <label for="u">Email</label>

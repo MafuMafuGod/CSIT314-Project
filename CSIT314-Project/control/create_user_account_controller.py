@@ -9,6 +9,6 @@ class CreateUserAccountController:
         """Step 6b: returns accountExists from the Entity."""
         return UserAccount.accountExists(u)
 
-    def createUserAccount(self, name: str, u: str, p: str, profile: str) -> bool:
+    def createUserAccount(self, name: str, u: str, p: str, profile: str, permissions: list) -> bool:
         """Step 7: returns accountCreated from the Entity."""
-        return UserAccount.createAccount(name, u, p, profile)
+        return UserAccount.createAccount(name, u, p, profile, permissions)

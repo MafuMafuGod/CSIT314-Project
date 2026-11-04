@@ -1,0 +1,5 @@
+<!-- Users / Profiles tabs -->
+<nav class="adm-tabs" aria-label="User management sections">
+   <a href="{{ url_for('user_management.userManagementPage') }}" class="{{ 'on' if adm_tab == 'users' }}">Users</a>
+   <a href="/admin/profiles" class="{{ 'on' if adm_tab == 'profiles' }}">Profiles</a>
+</nav>

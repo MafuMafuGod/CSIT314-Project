@@ -1,63 +1,94 @@
-<!-- «Boundary» CreateUserAccountPage
- Create user account form, validation errors (6a / 6b), confirmation message -->
+<!-- «Boundary» CreateUserAccountPage (#42)
+ Create user form, validation errors (6a / 6b), "Account summary" confirmation (step 8) -->
 
 {% extends "base.html" %}
-{% block title %}Create User Account | 4RENO{% endblock %}
+{% block title %}Create user | 4RENO{% endblock %}
 {% block content %}
+{% from "_admin_macros.html" import permissionCheckboxes %}
 
-<style>
-    .formbox input.field-error,
-    .formbox select.field-error {
-        border-color: #c0392b;
-        background: #fdf2f1;
-        margin-bottom: 4px;
-    }
+{# permissionGroups, profileOptions and profileDefaults come from the Boundary (UserProfile entity) #}
+<a class="adm-back" href="{{ url_for('user_management.userManagementPage') }}">&lsaquo; Back to users</a>
+<h1 style="margin-top:0">Create user</h1>
 
-    .field-warning {
-        margin: 0 0 15px;
-        color: #9c2929;
-        font-size: .85rem;
-    }
+{% if successMessage %}
+<!-- Step 8: confirmation. The summary is read from what the admin just submitted. -->
+<div class="banner ok" role="status">{{ successMessage }}</div>
 
-    .formbox select {
-        margin-bottom: 15px;
-    }
-</style>
+<section class="adm-card" style="max-width:760px">
+    <h2>Account summary</h2>
+    <dl class="adm-dl">
+        <dt>Full name</dt>
+        <dd>{{ request.form.get('name') }}</dd>
+        <dt>Email</dt>
+        <dd>{{ request.form.get('u') }}</dd>
+        <dt>Profile</dt>
+        <dd>{{ profileLabels.get(request.form.get('profile'), '—') }}</dd>
+        <dt>Permissions</dt>
+        <dd>{{ request.form.getlist('permissions') | join(', ') or '—' }}</dd>
+        <dt>Status</dt>
+        <dd>Active</dd>
+    </dl>
+    <div class="adm-buttons" style="justify-content:flex-start;margin-top:18px">
+        <a class="btn outline" href="{{ url_for('create_account.createAccountPage') }}">Create another user</a>
+        <a class="btn" href="{{ url_for('user_management.userManagementPage') }}">Back to users</a>
+    </div>
+</section>
 
-<p><a href="{{ url_for('user_management.userManagementPage') }}">&lsaquo; Back to User Management</a></p>
-<h1 style="text-align:left">Create User Account</h1>
-
-{% if successMessage %}<div class="banner ok" role="status">{{ successMessage }}</div>{% endif %}
-
-<form class="formbox" style="max-width:520px" method="post" action="{{ url_for('create_account.createAccountPage') }}"
-    novalidate>
+{% else %}
+<form class="formbox adm-form" method="post" action="{{ url_for('create_account.createAccountPage') }}" novalidate>
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-    <label for="name">Name</label>
-    <input id="name" type="text" name="name" placeholder="Enter full name" maxlength="100"
-        class="{{ 'field-error' if fieldErrors.name }}">
-    {% if fieldErrors.name %}<p class="field-warning">{{ fieldErrors.name }}</p>{% endif %}
+    <div class="adm-two">
+        <div class="adm-field">
+            <label for="name">Full name</label>
+            <input id="name" type="text" name="name" maxlength="100" value="{{ request.form.get('name', '') }}"
+                class="{{ 'bad' if fieldErrors.name }}">
+            {% if fieldErrors.name %}<p class="adm-error">{{ fieldErrors.name }}</p>{% endif %}
+        </div>
+        <div class="adm-field">
+            <label for="u">Email</label>
+            <input id="u" type="email" name="u" maxlength="100" value="{{ request.form.get('u', '') }}"
+                class="{{ 'bad' if fieldErrors.u }}">
+            {% if fieldErrors.u %}<p class="adm-error">{{ fieldErrors.u }}</p>{% endif %}
+        </div>
+    </div>
 
-    <label for="u">Email</label>
-    <input id="u" type="email" name="u" placeholder="Enter email address" maxlength="100"
-        class="{{ 'field-error' if fieldErrors.u }}">
-    {% if fieldErrors.u %}<p class="field-warning">{{ fieldErrors.u }}</p>{% endif %}
+    <div class="adm-two">
+        <div class="adm-field">
+            <label for="profile">Profile</label>
+            <select id="profile" name="profile" class="{{ 'bad' if fieldErrors.profile }}">
+                <option value="">Select a profile</option>
+                {% for value, label in profileOptions.items() %}
+                <option value="{{ value }}" {{ 'selected' if request.form.get('profile')==value }}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            {% if fieldErrors.profile %}<p class="adm-error">{{ fieldErrors.profile }}</p>{% endif %}
+        </div>
+        <div class="adm-field">
+            <label for="p">Initial password</label>
+            <input id="p" type="password" name="p" autocomplete="new-password" class="{{ 'bad' if fieldErrors.p }}">
+            {% if fieldErrors.p %}<p class="adm-error">{{ fieldErrors.p }}</p>{% endif %}
+        </div>
+    </div>
 
-    <label for="p">Initial password</label>
-    <input id="p" type="password" name="p" placeholder="Enter an initial password" autocomplete="new-password"
-        class="{{ 'field-error' if fieldErrors.p }}">
-    {% if fieldErrors.p %}<p class="field-warning">{{ fieldErrors.p }}</p>{% endif %}
+    {{ permissionCheckboxes(permissionGroups, request.form.getlist('permissions')) }}
 
-    <label for="profile">Profile</label>
-    <select id="profile" name="profile" class="{{ 'field-error' if fieldErrors.profile }}">
-        <option value="">Select a profile</option>
-        {% for value, label in profileLabels.items() %}
-        <option value="{{ value }}">{{ label }}</option>
-        {% endfor %}
-    </select>
-    {% if fieldErrors.profile %}<p class="field-warning">{{ fieldErrors.profile }}</p>{% endif %}
-
-    <button class="btn" type="submit">Create Account</button>
-    <a class="btn outline" href="{{ url_for('user_management.userManagementPage') }}">Cancel</a>
+    <div class="adm-buttons">
+        <a class="btn outline" href="{{ url_for('user_management.userManagementPage') }}">Cancel</a>
+        <button type="submit">Create user</button>
+    </div>
 </form>
+
+<script>
+    // When a profile is picked, tick that profile's default permissions.
+    var defaults = {{ profileDefaults | tojson }};
+    document.getElementById('profile').addEventListener('change', function () {
+        var boxes = document.querySelectorAll('input[name="permissions"]');
+        var ticked = defaults[this.value] || [];
+        for (var i = 0; i < boxes.length; i++) {
+            boxes[i].checked = ticked.includes(boxes[i].value);
+        }
+    });
+</script>
+{% endif %}
 {% endblock %}
