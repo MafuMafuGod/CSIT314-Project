@@ -3,3 +3,4 @@ from entity.user_account import UserAccount
 from entity.user_profile import UserProfile
 from entity.user_session import UserSession
 from entity.interior_design_project import InteriorDesignProject
+from entity.company_profile import CompanyProfile

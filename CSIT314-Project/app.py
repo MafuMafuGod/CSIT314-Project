@@ -3,6 +3,7 @@
 
 Use cases in this code:
   #06 User Login  #07 User Logout  #31 Customer Login  #70 Platform Admin Login
+  #09 Create  #10 View  #11 Update  Company Profile (Matthew)
   #32 Search IDPs  #33 View IDP Details
   #40 / #41 IDP view and shortlist count (Matthew)
   #42 Create  #43 View  #44 Update  #45 Suspend  #46 Search  User Account
@@ -87,12 +88,12 @@ def requireAdmin():
 
 @app.before_request
 def requireDesigner():
-    """Precondition for #40/#41: only a logged-in ID may open the IDP Interest page."""
-    if request.path.startswith("/designer/interest"):
+    """Precondition for #09-#11 and #40/#41: only a logged-in ID may open /designer pages."""
+    if request.path.startswith("/designer"):
         if not session.get("u"):
             return redirect(url_for("login.loginPage"))
         if session.get("profile") != "designer":
-            flash("Only Interior Designers can view IDP interest.", "err")
+            flash("Only Interior Designers can access this page.", "err")
             return redirect(url_for("home.displayHome"))
 
 
