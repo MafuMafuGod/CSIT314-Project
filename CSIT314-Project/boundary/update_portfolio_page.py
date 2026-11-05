@@ -30,7 +30,7 @@ def displayNotFound(kind: str) -> str:                                  # precon
 
 def submitChanges(kind: str, idpID: int, form: dict) -> str:
     # Step 6: Boundary validates the updated information
-    fieldErrors = validateForm(form, kind)
+    fieldErrors = validateForm(form, kind, CONTROLLERS[kind]().getCategories())
     if fieldErrors:                                                     # 6a
         return displayEditForm(kind, idpID, form, fieldErrors)
     # Step 7: save the updated portfolio

@@ -1,0 +1,77 @@
+<!-- «Boundary» IDPCategoryPage — category list (#67) and #69 Search IDP categories.
+ #69: search categories by name / description, then search the projects inside one category. -->
+
+{% extends "base.html" %}
+{% block title %}IDP Categories | 4RENO{% endblock %}
+{% block content %}
+
+<div class="adm-head">
+    <div>
+        <h1>IDP Categories</h1>
+        <p class="sub">Create, view, update, delete and search the categories IDPs belong to.</p>
+    </div>
+    <a class="btn" href="{{ url_for('idp_category_management.createCategoryPage') }}">Create category</a>
+</div>
+
+<form class="adm-filters" method="get" action="{{ url_for('idp_category_management.searchCategoryPage') }}">
+    <input type="search" name="keyword" value="{{ keyword }}" maxlength="100"
+        placeholder="Search categories by name or description" aria-label="Search categories">
+    <button type="submit">Search</button>
+</form>
+{% if error %}<div class="banner err" role="alert">{{ error }}</div>{% endif %}
+
+{% if categories %}
+<div class="adm-count">
+    <span>{{ categories | length }} categor{{ 'y' if categories | length == 1 else 'ies' }}{{ ' found' if searched }}</span>
+    {% if searched %}<a href="{{ url_for('idp_category_management.categoryListPage') }}">Clear search</a>{% endif %}
+</div>
+<table class="adm-table">
+    <thead>
+        <tr><th>Category</th><th>Description</th><th>Projects</th><th></th></tr>
+    </thead>
+    <tbody>
+        {% for c in categories %}
+        <tr>
+            <td class="strong"><a href="{{ url_for('idp_category_management.viewCategoryPage', categoryID=c.categoryID) }}">{{ c.name }}</a></td>
+            <td>{{ c.description or '—' }}</td>
+            <td>{{ c.projectCount }}</td>
+            <td style="text-align:right">
+                {% if searched %}<a href="{{ url_for('idp_category_management.searchCategoryPage', keyword=keyword, categoryID=c.categoryID) }}">Search projects</a>{% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% elif not error %}
+<div class="adm-empty">
+    <h2>{{ 'No categories found' if searched else 'No categories yet' }}</h2>
+    <p>{{ 'Try a different keyword.' if searched else 'Create the first category for IDPs.' }}</p>
+    <a class="btn" href="{{ url_for('idp_category_management.categoryListPage') if searched else url_for('idp_category_management.createCategoryPage') }}">{{
+        'Clear search' if searched else 'Create category' }}</a>
+</div>
+{% endif %}
+
+{% if selectedCategory %}
+<!-- #69: search the projects inside the selected category -->
+<section class="adm-card" style="margin-top:18px">
+    <h2>Projects in {{ selectedCategory.name }}</h2>
+    <form class="adm-filters" method="get" action="{{ url_for('idp_category_management.searchCategoryPage') }}">
+        <input type="hidden" name="keyword" value="{{ keyword }}">
+        <input type="hidden" name="categoryID" value="{{ selectedCategory.categoryID }}">
+        <input type="search" name="projectKeyword" value="{{ projectKeyword }}" maxlength="100"
+            placeholder="Search project names in this category" aria-label="Search projects">
+        <button type="submit">Search</button>
+    </form>
+    {% if projects %}
+    <table class="adm-table">
+        <thead><tr><th>Project</th><th>Status</th><th>Designer</th></tr></thead>
+        <tbody>
+            {% for p in projects %}<tr><td class="strong">{{ p.name }}</td><td>{{ p.status }}</td><td>{{ p.designerU }}</td></tr>{% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="sub">No projects found in this category.</p>
+    {% endif %}
+</section>
+{% endif %}
+{% endblock %}

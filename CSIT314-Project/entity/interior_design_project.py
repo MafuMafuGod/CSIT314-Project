@@ -1,5 +1,5 @@
 """«Entity» InteriorDesignProject — used by #32 Search IDPs, #33 View IDP Details,
-#34 / #35 / #36 Shortlist, #40, #41 (Matthew), #62-#64 reports and the portfolio:
+#34 / #35 / #36 Shortlist, #40, #41 (Matthew), #62-#64 reports, #65-#69 categories and the portfolio:
   current projects #52 Create, #53 View, #54 Update, #55 Delete, #56 Search
   past projects    #57 Create, #58 View, #59 Update, #60 Delete, #61 Search
 """
@@ -168,17 +168,43 @@ class InteriorDesignProject:
                 if cls._findIDP(p["idpID"])._matches(keyword, "")]
 
     # ---- #62 / #63 / #64 Project reports -----------------------------------
+    def _toSummary(self) -> dict:
+        return {"projectID": self._idpID, "name": self._title, "status": self._status,
+                "category": self._category, "designerU": self._designerU}
+
     @classmethod
     def getProjectSummaries(cls) -> list:
-        """Every project on the platform (id, name, status), A-Z, for the report form."""
-        rows = [{"projectID": idp._idpID, "name": idp._title, "status": idp._status} for idp in cls._idps]
-        return sorted(rows, key=lambda p: p["name"].casefold())
+        """Every project on the platform, A-Z (#62-#64 report form, #65 / #66 project choice)."""
+        return sorted((idp._toSummary() for idp in cls._idps), key=lambda p: p["name"].casefold())
 
     @classmethod
     def getProjectSummary(cls, idpID: int) -> dict:
-        """One project's id, name and status ({} if it does not exist)."""
+        """One project's summary ({} if it does not exist)."""
         idp = cls._findIDP(idpID)
-        return {"projectID": idp._idpID, "name": idp._title, "status": idp._status} if idp else {}
+        return idp._toSummary() if idp else {}
+
+    # ---- #65 - #69 IDP categories ------------------------------------------
+    @classmethod
+    def getProjectsInCategory(cls, categoryName: str) -> list:
+        """#67 / #68 / #69: the projects linked to a category, A-Z."""
+        return [p for p in cls.getProjectSummaries() if p["category"].casefold() == categoryName.casefold()]
+
+    @classmethod
+    def setProjectCategory(cls, idpID: int, categoryName: str) -> bool:
+        """#65 / #66: link a project to a category (or move it to another one)."""
+        idp = cls._findIDP(idpID)
+        if idp is None:
+            return False
+        idp._category = categoryName
+        return True
+
+    @classmethod
+    def renameCategory(cls, oldName: str, newName: str) -> int:
+        """#66: keep projects linked when their category is renamed. Returns how many moved."""
+        moved = [idp for idp in cls._idps if idp._category.casefold() == oldName.casefold()]
+        for idp in moved:
+            idp._category = newName
+        return len(moved)
 
     # ---- #40 step 2: the ID's IDPs with their view counts --------------------
     @classmethod

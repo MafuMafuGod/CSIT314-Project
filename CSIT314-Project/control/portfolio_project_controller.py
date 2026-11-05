@@ -3,7 +3,7 @@
 shares the same code (inheritance + polymorphism)."""
 from abc import ABC
 
-from entity import InteriorDesignProject
+from entity import IDPCategory
 
 
 class PortfolioProjectController(ABC):
@@ -12,5 +12,5 @@ class PortfolioProjectController(ABC):
     STATUS = ""
 
     def getCategories(self) -> list:
-        """Existing categories, suggested in the create / edit form."""
-        return InteriorDesignProject.getCategories()
+        """The categories managed by the Platform Administrator (#65-#69), for the form."""
+        return IDPCategory.getCategoryNames()

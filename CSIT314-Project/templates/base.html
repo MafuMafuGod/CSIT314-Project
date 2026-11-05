@@ -36,6 +36,8 @@
       {% elif session.get('profile') == 'platform' %}
       <a href="{{ url_for('project_reports.reportDashboard', period='daily') }}"
         class="{{ 'active' if active == 'reports' else '' }}">Project Reports</a>
+      <a href="{{ url_for('idp_category_management.categoryListPage') }}"
+        class="{{ 'active' if active == 'categories' else '' }}">IDP Categories</a>
       <!-- Customer (or anyone not logged in: search and shortlist) -->
       {% else %}
       <a href="{{ url_for('search_idp.searchPage') }}" class="{{ 'active' if active == 'search' else '' }}">Interior

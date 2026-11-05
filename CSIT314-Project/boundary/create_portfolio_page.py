@@ -27,7 +27,7 @@ def displaySuccess(kind: str) -> str:                                   # step 7
 
 def submitDetails(kind: str, form: dict) -> str:
     # Step 5: Boundary validates the entered information
-    fieldErrors = validateForm(form, kind)
+    fieldErrors = validateForm(form, kind, CONTROLLERS[kind]().getCategories())
     if fieldErrors:
         return displayError(kind, form, fieldErrors)
     # Step 6: save the project with status "Current" (#52) or "Past" (#57)

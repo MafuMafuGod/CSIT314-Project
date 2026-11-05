@@ -1,0 +1,63 @@
+<!-- «Boundary» IDPCategoryPage — #67 View IDP category: details and linked projects.
+ Edit (#66), assign a project (#66) and the Delete pop-up (#68: blocked while projects are linked). -->
+
+{% extends "base.html" %}
+{% block title %}{{ category.name }} | 4RENO{% endblock %}
+{% block content %}
+
+<a class="adm-back" href="{{ url_for('idp_category_management.categoryListPage') }}">&lsaquo; Back to categories</a>
+
+<div class="adm-title-row">
+    <div>
+        <h1>{{ category.name }}</h1>
+        <p class="sub">{{ category.description or 'No description' }} &middot; {{ category.categoryID }} &middot; Created {{ category.createdDate }}</p>
+    </div>
+    <div class="adm-actions">
+        <a class="btn" href="{{ url_for('idp_category_management.updateCategoryPage', categoryID=category.categoryID) }}">Edit</a>
+        <a class="btn outline" href="#delete-modal">Delete</a>
+    </div>
+</div>
+
+<section class="adm-card">
+    <h2>Projects in this category ({{ projects | length }})</h2>
+    {% if projects %}
+    <table class="adm-table">
+        <thead><tr><th>Project</th><th>Status</th><th>Designer</th></tr></thead>
+        <tbody>
+            {% for p in projects %}<tr><td class="strong">{{ p.name }}</td><td>{{ p.status }}</td><td>{{ p.designerU }}</td></tr>{% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="sub">No projects are linked to this category yet.</p>
+    {% endif %}
+
+    <form class="adm-filters" style="margin-top:16px" method="post"
+        action="{{ url_for('idp_category_management.assignProjectPage', categoryID=category.categoryID) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <select name="projectID" aria-label="Project to assign">
+            <option value="">Assign a project to this category…</option>
+            {% for p in assignable %}<option value="{{ p.projectID }}">{{ p.name }} ({{ p.category or 'no category' }})</option>{% endfor %}
+        </select>
+        <button type="submit">Assign</button>
+    </form>
+    {% if errors.projectID %}<p class="adm-error">{{ errors.projectID }}</p>{% endif %}
+</section>
+
+<!-- #68: delete pop-up. Cancel closes it and nothing is deleted. -->
+<div id="delete-modal" class="adm-modal">
+    <form class="adm-modal-box" method="post" action="{{ url_for('idp_category_management.deleteCategoryPage', categoryID=category.categoryID) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <h2>Delete "{{ category.name }}"?</h2>
+        {% if projects %}
+        <p class="sub">This category still has {{ projects | length }} linked project(s), so it cannot be deleted. Move them to another category first.</p>
+        <div class="adm-buttons"><a class="btn outline" href="#">Close</a></div>
+        {% else %}
+        <p class="sub">Designers will no longer be able to choose this category. This cannot be undone.</p>
+        <div class="adm-buttons">
+            <a class="btn outline" href="#">Cancel</a>
+            <button type="submit">Delete category</button>
+        </div>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}

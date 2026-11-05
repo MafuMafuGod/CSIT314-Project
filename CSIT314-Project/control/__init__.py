@@ -32,3 +32,6 @@ from control.manage_contact_info_controller import ManageContactInfoController
 from control.search_company_profiles_controller import SearchCompanyProfilesController
 from control.project_report_controller import (DailyProjectReportController, WeeklyProjectReportController,
                                                MonthlyProjectReportController)
+from control.idp_category_controller import (CreateIDPCategoryController, UpdateIDPCategoryController,
+                                             ViewIDPCategoryController, DeleteIDPCategoryController,
+                                             SearchIDPCategoryController)

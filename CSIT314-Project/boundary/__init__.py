@@ -24,9 +24,10 @@ from boundary.save_idp_page import save_favourite
 from boundary.search_shortlist_page import search_shortlist
 from boundary.view_shortlisted_idp_page import view_shortlisted
 from boundary.project_report_page import project_reports
+from boundary.idp_category_page import idp_category_management
 from boundary.placeholder_pages import home
 
 ALL_BLUEPRINTS = (login, logout, create_account, user_management, update_account, suspend_account,
                   create_profile, view_profile, update_profile, suspend_profile,
                   idp_interest, search_idp, view_idp, company_profile, manage_contact_info, search_company_profiles,
-                  portfolio, create_portfolio, view_portfolio, update_portfolio, delete_portfolio, project_reports, home, save_favourite, search_shortlist, view_shortlisted)
+                  portfolio, create_portfolio, view_portfolio, update_portfolio, delete_portfolio, project_reports, idp_category_management, home, save_favourite, search_shortlist, view_shortlisted)

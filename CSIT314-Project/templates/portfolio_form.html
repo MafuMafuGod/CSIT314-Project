@@ -36,9 +36,10 @@ endmacro %}
     <div class="adm-two">
         <div class="adm-field">
             <label for="category">Category <span class="sub">(optional)</span></label>
-            <input id="category" type="text" name="category" maxlength="50" value="{{ form.category }}"
-                list="category-list" placeholder="e.g. Living Room" class="{{ 'bad' if fieldErrors.category }}">
-            <datalist id="category-list">{% for c in categories %}<option value="{{ c }}">{% endfor %}</datalist>
+            <select id="category" name="category" class="{{ 'bad' if fieldErrors.category }}">
+                <option value="">No category</option>
+                {% for c in categories %}<option {{ 'selected' if form.category == c }}>{{ c }}</option>{% endfor %}
+            </select>
             {{ fieldError('category') }}
         </div>
         {% if kind == 'past' %}

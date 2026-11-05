@@ -21,11 +21,13 @@ def readPortfolioForm(kind: str) -> dict:
     return form
 
 
-def validateForm(form: dict, kind: str) -> dict:
+def validateForm(form: dict, kind: str, categories: list = None) -> dict:
     """Boundary input check for #52 / #57 (5a) and #54 / #59 (6a): required fields, lengths and,
     for past projects, a real completion date that is not in the future.
     Returns fieldErrors; empty dict = all valid."""
     fieldErrors = {f: msg for f, msg in REQUIRED_MESSAGES.items() if not form[f]}
+    if categories is not None and form["category"] and form["category"] not in categories:
+        fieldErrors["category"] = "Please choose a category from the list."
     for f, limit in MAX_LENGTHS.items():
         if len(form[f]) > limit:
             fieldErrors[f] = f"Must be {limit} characters or fewer."

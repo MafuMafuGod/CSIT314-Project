@@ -9,6 +9,7 @@ Use cases in this code:
   #34 Save IDP  #35 Search Shortlist  #36 View Shortlisted IDP  #37 Customer Logout
   #40 / #41 IDP view and shortlist count (Matthew)
   #62 Daily  #63 Weekly  #64 Monthly project reports (Platform Management)
+  #65 Create  #66 Update  #67 View  #68 Delete  #69 Search  IDP Category (Platform Management)
   #52-#56 Current project portfolio  #57-#61 Past project portfolio (Create / View / Update / Delete / Search)
   #42 Create  #43 View  #44 Update  #45 Suspend  #46 Search  User Account
   #47 Create  #48 View  #49 Update  #50 Suspend  #51 Search  User Profile
@@ -97,13 +98,13 @@ def requireCustomer():
 
 @app.before_request
 def requirePlatform():
-    """Precondition for #62-#64: only a logged-in Platform Administrator may open /platform pages."""
+    """Precondition for #62-#69: only a logged-in Platform Administrator may open /platform pages."""
     if request.path.startswith("/platform"):
         if not session.get("u"):
-            flash("Please log in to access project reports.", "info")
+            flash("Please log in as a Platform Administrator.", "info")
             return redirect(url_for("login.loginPage"))
         if session.get("profile") != "platform":
-            flash("Only Platform Administrators can access project reports.", "err")
+            flash("Only Platform Administrators can access this page.", "err")
             return redirect(url_for("home.displayHome"))
 
 
