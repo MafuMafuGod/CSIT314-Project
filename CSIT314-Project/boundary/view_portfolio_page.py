@@ -1,5 +1,4 @@
-"""«Boundary» ViewPortfolioPage — #53 View current project / #58 View past project
-(no class: portfolio_view.html + route functions)."""
+"""«Boundary» ViewPortfolioPage — #53 View current project / #58 View past project"""
 from flask import Blueprint, render_template, session
 
 from control import ViewCurrentProjectController, ViewPastProjectController

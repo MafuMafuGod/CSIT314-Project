@@ -2,11 +2,9 @@
 #34 / #35 / #36 Shortlist, #40, #41 (Matthew) and the portfolio:
   current projects #52 Create, #53 View, #54 Update, #55 Delete, #56 Search
   past projects    #57 Create, #58 View, #59 Update, #60 Delete, #61 Search
-
-Tracking hooks for other use cases (call these through a Controller, don't edit the counts directly):
-  #33 View IDP details       -> InteriorDesignProject.incrementViewCount(idpID)
-  #34 Save IDP to shortlist  -> InteriorDesignProject.incrementShortlistCount(idpID)
 """
+
+
 from datetime import date
 from typing import Optional
 

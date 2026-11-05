@@ -5,7 +5,7 @@ from typing import Optional
 
 
 class CompanyProfile:
-    """An Interior Designer's company information, shown to customers."""
+    #An Interior Designer's company information, shown to customers.
 
     _profiles = []                      # stand-in for the database table
 
@@ -36,15 +36,15 @@ class CompanyProfile:
     # ---- #09 Create company profile -----------------------------------------
     @classmethod
     def profileExists(cls, designerU: str) -> bool:
-        """#09 precondition check: does this ID already have a company profile?"""
+        # 09 precondition check: does this ID already have a company profile?
         return cls._findProfile(designerU) is not None
 
     @classmethod
     def createProfile(cls, designerU: str, companyName: str, description: str,
                       businessEmail: str, businessPhone: str, businessAddress: str,
                       website: str = "") -> bool:
-        """#09 step 3: save the new company profile. The Boundary has already checked
-        (through the Controller) that the ID has no profile yet."""
+        #09 step 3: save the new company profile. 
+
         cls._profiles.append(CompanyProfile(designerU, companyName, description, businessEmail,
                                             businessPhone, businessAddress, website))
         return True

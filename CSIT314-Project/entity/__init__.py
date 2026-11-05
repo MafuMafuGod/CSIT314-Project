@@ -1,4 +1,4 @@
-"""«Entity» layer: owns the data. Only the Control layer may import from here."""
+"""«Entity» layer: owns the data. Only the Controller layer may import from here."""
 from entity.user_account import UserAccount
 from entity.user_profile import UserProfile
 from entity.user_session import UserSession
