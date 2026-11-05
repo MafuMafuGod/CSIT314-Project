@@ -1,0 +1,123 @@
+<!-- «Boundary» ProjectReportPage — #62 Daily, #63 Weekly, #64 Monthly project reports
+ Pick a project and a day / week / month, then see the summary, the activity list and a CSV download.
+ "No progress records found" when the project had no activity in that period. -->
+
+{% extends "base.html" %}
+{% block title %}Project Reports | 4RENO{% endblock %}
+{% block content %}
+
+{% macro fieldError(name) %}{% if errors[name] %}<p class="adm-error">{{ errors[name] }}</p>{% endif %}{% endmacro %}
+
+<div class="adm-head">
+    <div>
+        <h1>Project Reports</h1>
+        <p class="sub">See how a project progressed over a day, a week or a month.</p>
+    </div>
+</div>
+
+<nav class="adm-tabs" aria-label="Report period">
+    {% for p, label in [('daily', 'Daily'), ('weekly', 'Weekly'), ('monthly', 'Monthly')] %}
+    <a href="{{ url_for('project_reports.reportDashboard', period=p) }}" class="{{ 'on' if period == p }}">{{ label }}</a>
+    {% endfor %}
+</nav>
+
+<form class="formbox adm-form" method="post" action="{{ url_for('project_reports.reportDashboard', period=period) }}" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="adm-two">
+        <div class="adm-field">
+            <label for="projectID">Project</label>
+            <select id="projectID" name="projectID" class="{{ 'bad' if errors.projectID }}">
+                <option value="">Select a project</option>
+                {% for p in projects %}
+                <option value="{{ p.projectID }}" {{ 'selected' if selected.projectID == p.projectID|string }}>{{ p.name }} ({{ p.status }})</option>
+                {% endfor %}
+            </select>
+            {{ fieldError('projectID') }}
+        </div>
+        {% if period == 'daily' %}
+        <div class="adm-field">
+            <label for="date">Date</label>
+            <input id="date" type="date" name="date" max="{{ today }}" value="{{ selected.date or today }}"
+                class="{{ 'bad' if errors.date }}">
+            {{ fieldError('date') }}
+        </div>
+        {% elif period == 'monthly' %}
+        <div class="adm-field">
+            <label for="month">Month</label>
+            <input id="month" type="month" name="month" max="{{ today[:7] }}" value="{{ selected.month or today[:7] }}"
+                class="{{ 'bad' if errors.month }}">
+            {{ fieldError('month') }}
+        </div>
+        {% endif %}
+    </div>
+    {% if period == 'weekly' %}
+    <div class="adm-two">
+        <div class="adm-field">
+            <label for="startDate">Week start date</label>
+            <input id="startDate" type="date" name="startDate" max="{{ today }}" value="{{ selected.startDate }}"
+                class="{{ 'bad' if errors.startDate }}">
+            {{ fieldError('startDate') }}
+        </div>
+        <div class="adm-field">
+            <label for="endDate">Week end date</label>
+            <input id="endDate" type="date" name="endDate" max="{{ today }}" value="{{ selected.endDate or today }}"
+                class="{{ 'bad' if errors.endDate }}">
+            {{ fieldError('endDate') }}
+        </div>
+    </div>
+    {% endif %}
+    <div class="adm-buttons"><button type="submit">Generate Report</button></div>
+</form>
+
+{% if message %}
+<div class="adm-empty" style="margin-top:18px">
+    <h2>{{ message }}</h2>
+    <p>Try another project or a different period.</p>
+</div>
+{% endif %}
+
+{% if report %}
+<section class="adm-card" style="margin-top:18px">
+    <div class="adm-title-row" style="margin-bottom:12px">
+        <div>
+            <h2 style="margin:0">{{ report.project.name }}</h2>
+            <p class="sub">{{ report.period | capitalize }} report &middot; {{ report.startDate }}{% if report.endDate !=
+                report.startDate %} to {{ report.endDate }}{% endif %} &middot; {{ report.project.status }} project</p>
+        </div>
+        <a class="btn outline"
+            href="{{ url_for('project_reports.downloadReport', period=period, reportID=report.reportID) }}">Download
+            CSV</a>
+    </div>
+    <div class="rp-stats">
+        {% set s = report.summary %}
+        {% for label, value in [('Tasks completed', s.tasksCompleted),
+        ('Progress', (s.progressPercent ~ '%') if s.progressPercent is not none else '—'),
+        ('Progress change', ('%+d' % s.progressChange ~ '%') if s.progressChange is not none else '—'),
+        ('Open issues', s.openIssues), ('Milestones', s.milestonesCompleted), ('Activities', s.activityCount)] %}
+        <div class="rp-stat">
+            <div class="v">{{ value }}</div>
+            <div class="k">{{ label }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<table class="adm-table">
+    <thead>
+        <tr><th>When</th><th>Activity</th></tr>
+    </thead>
+    <tbody>
+        {% for a in report.activities %}
+        <tr><td style="white-space:nowrap">{{ a.timestamp[:16] | replace('T', ' ') }}</td><td>{{ a.summary }}</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+<style>
+    .rp-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
+    .rp-stat { padding: 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--blue-050); }
+    .rp-stat .v { font-size: 1.5rem; font-weight: 700; color: var(--blue-900); }
+    .rp-stat .k { font-size: .82rem; color: #6b7280; }
+</style>
+{% endblock %}

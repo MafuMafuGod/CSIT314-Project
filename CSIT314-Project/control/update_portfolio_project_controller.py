@@ -1,5 +1,5 @@
 """«Control» UpdateCurrentProjectController (#54) and UpdatePastProjectController (#59)."""
-from entity import InteriorDesignProject
+from entity import InteriorDesignProject, ProjectReport
 from control.portfolio_project_controller import PortfolioProjectController
 
 
@@ -12,9 +12,13 @@ class UpdatePortfolioProjectController(PortfolioProjectController):
 
     def updateProject(self, designerU: str, idpID: int, title: str, description: str, designs: str,
                       materials: str, category: str, completionDate: str = "") -> bool:
-        """Step 7: returns updated (False = save failed, 7a)."""
-        return InteriorDesignProject.updateProject(designerU, idpID, self.STATUS, title, description,
-                                                   designs, materials, category, completionDate)
+        """Step 7: returns updated (False = save failed, 7a).
+        A saved update is also recorded as project activity for the #62-#64 reports."""
+        updated = InteriorDesignProject.updateProject(designerU, idpID, self.STATUS, title, description,
+                                                      designs, materials, category, completionDate)
+        if updated:
+            ProjectReport.recordActivity(idpID, "portfolio_updated", "Portfolio information updated")
+        return updated
 
 
 class UpdateCurrentProjectController(UpdatePortfolioProjectController):

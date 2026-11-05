@@ -1,5 +1,5 @@
 """«Entity» InteriorDesignProject — used by #32 Search IDPs, #33 View IDP Details,
-#34 / #35 / #36 Shortlist, #40, #41 (Matthew) and the portfolio:
+#34 / #35 / #36 Shortlist, #40, #41 (Matthew), #62-#64 reports and the portfolio:
   current projects #52 Create, #53 View, #54 Update, #55 Delete, #56 Search
   past projects    #57 Create, #58 View, #59 Update, #60 Delete, #61 Search
 """
@@ -166,6 +166,19 @@ class InteriorDesignProject:
         [] if nothing matches (4a)."""
         return [p for p in cls.getProjectsByStatus(designerU, status)
                 if cls._findIDP(p["idpID"])._matches(keyword, "")]
+
+    # ---- #62 / #63 / #64 Project reports -----------------------------------
+    @classmethod
+    def getProjectSummaries(cls) -> list:
+        """Every project on the platform (id, name, status), A-Z, for the report form."""
+        rows = [{"projectID": idp._idpID, "name": idp._title, "status": idp._status} for idp in cls._idps]
+        return sorted(rows, key=lambda p: p["name"].casefold())
+
+    @classmethod
+    def getProjectSummary(cls, idpID: int) -> dict:
+        """One project's id, name and status ({} if it does not exist)."""
+        idp = cls._findIDP(idpID)
+        return {"projectID": idp._idpID, "name": idp._title, "status": idp._status} if idp else {}
 
     # ---- #40 step 2: the ID's IDPs with their view counts --------------------
     @classmethod

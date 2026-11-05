@@ -30,3 +30,5 @@ from control.delete_portfolio_project_controller import DeleteCurrentProjectCont
 from control.search_portfolio_project_controller import SearchCurrentProjectController, SearchPastProjectController
 from control.manage_contact_info_controller import ManageContactInfoController
 from control.search_company_profiles_controller import SearchCompanyProfilesController
+from control.project_report_controller import (DailyProjectReportController, WeeklyProjectReportController,
+                                               MonthlyProjectReportController)

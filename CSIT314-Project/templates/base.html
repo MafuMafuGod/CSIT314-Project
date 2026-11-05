@@ -32,8 +32,10 @@
       {% elif session.get('profile') == 'admin' %}
       <a href="{{ url_for('user_management.userManagementPage') }}"
         class="{{ 'active' if active == 'users' else '' }}">User Management</a>
-      <!-- Platform Management: its pages are not built yet -->
+      <!-- Platform Management -->
       {% elif session.get('profile') == 'platform' %}
+      <a href="{{ url_for('project_reports.reportDashboard', period='daily') }}"
+        class="{{ 'active' if active == 'reports' else '' }}">Project Reports</a>
       <!-- Customer (or anyone not logged in: search and shortlist) -->
       {% else %}
       <a href="{{ url_for('search_idp.searchPage') }}" class="{{ 'active' if active == 'search' else '' }}">Interior
