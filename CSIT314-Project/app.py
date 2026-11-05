@@ -4,6 +4,7 @@
 Use cases in this code:
   #06 User Login  #07 User Logout  #31 Customer Login  #70 Platform Admin Login
   #09 Create  #10 View  #11 Update  Company Profile (Matthew)
+  #12 Manage contact information  #13 Search company profiles
   #32 Search IDPs  #33 View IDP Details
   #34 Save IDP  #35 Search Shortlist  #36 View Shortlisted IDP  #37 Customer Logout
   #40 / #41 IDP view and shortlist count (Matthew)
@@ -104,7 +105,7 @@ def requireAdmin():
 
 @app.before_request
 def requireDesigner():
-    """Precondition for #09-#11, #40/#41 and #52-#61: only a logged-in ID may open /designer pages."""
+    """Precondition for #09-#13, #40/#41 and #52-#61: only a logged-in ID may open /designer pages."""
     if request.path.startswith("/designer"):
         if not session.get("u"):
             return redirect(url_for("login.loginPage"))

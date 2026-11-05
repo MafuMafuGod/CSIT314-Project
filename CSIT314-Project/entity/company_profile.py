@@ -1,4 +1,5 @@
-"""«Entity» CompanyProfile — used by #09 Create, #10 View, #11 Update company profile.
+"""«Entity» CompanyProfile — used by #09 Create, #10 View, #11 Update company profile,
+#12 Manage contact information and #13 Search company profiles.
 One company profile per Interior Designer (ID). Field names follow Dominic's design
 (companyName, description, businessEmail, businessPhone, businessAddress, website)."""
 from typing import Optional
@@ -11,7 +12,8 @@ class CompanyProfile:
 
     def __init__(self, designerU: str, companyName: str, description: str,
                  businessEmail: str, businessPhone: str, businessAddress: str,
-                 website: str = "") -> None:
+                 website: str = "", instagram: str = "", facebook: str = "",
+                 linkedin: str = "") -> None:
         self._designerU = designerU      # the ID's username (email) - one profile each
         self._companyName = companyName
         self._description = description
@@ -19,6 +21,9 @@ class CompanyProfile:
         self._businessPhone = businessPhone
         self._businessAddress = businessAddress
         self._website = website          # optional
+        self._instagram = instagram      # optional social media (#12)
+        self._facebook = facebook
+        self._linkedin = linkedin
 
     # ---- private helpers ---------------------------------------------------
     @classmethod
@@ -31,7 +36,8 @@ class CompanyProfile:
     def _toDict(self) -> dict:
         return {"companyName": self._companyName, "description": self._description,
                 "businessEmail": self._businessEmail, "businessPhone": self._businessPhone,
-                "businessAddress": self._businessAddress, "website": self._website}
+                "businessAddress": self._businessAddress, "website": self._website,
+                "instagram": self._instagram, "facebook": self._facebook, "linkedin": self._linkedin}
 
     # ---- #09 Create company profile -----------------------------------------
     @classmethod
@@ -74,6 +80,43 @@ class CompanyProfile:
         return True
 
 
+    # ---- #12 Manage contact information ------------------------------------
+    @classmethod
+    def updateContactInfo(cls, designerU: str, businessEmail: str, businessPhone: str,
+                          businessAddress: str, website: str, instagram: str, facebook: str,
+                          linkedin: str) -> bool:
+        """#12 step 3: save only the contact fields. False if no profile exists."""
+        profile = cls._findProfile(designerU)
+        if profile is None:
+            return False
+        profile._businessEmail = businessEmail
+        profile._businessPhone = businessPhone
+        profile._businessAddress = businessAddress
+        profile._website = website
+        profile._instagram = instagram
+        profile._facebook = facebook
+        profile._linkedin = linkedin
+        return True
+
+    # ---- #13 Search company profiles ----------------------------------------
+    @classmethod
+    def searchProfiles(cls, keyword: str) -> list:
+        """#13: profiles whose name or public details contain the keyword (not case-sensitive),
+        A-Z by company name. [] if nothing matches."""
+        keyword = keyword.casefold()
+        matches = [p._toDict() for p in cls._profiles
+                   if keyword in " ".join(p._toDict().values()).casefold()]
+        return sorted(matches, key=lambda row: row["companyName"].casefold())
+
+
 # Sample data: designer@4reno.com starts WITHOUT a profile so the demo can show
-# #09 Create -> #10 View -> #11 Update in order.
-CompanyProfile._profiles = []
+# #09 Create -> #10 View -> #11 Update in order. Two other designers' profiles are
+# included so #13 Search has something to find.
+CompanyProfile._profiles = [
+    CompanyProfile("formfield@4reno.com", "Form & Field Interiors", "Thoughtful spaces for everyday living.",
+                   "hello@formandfield.sg", "+65 6123 4567", "21 Tanjong Pagar Road, Singapore 088444",
+                   "https://formandfield.sg", "@formandfield", "Form & Field Interiors", "Form & Field Interiors"),
+    CompanyProfile("nookstudio@4reno.com", "Nook Studio", "Compact HDB and condo makeovers with clever storage.",
+                   "hi@nookstudio.sg", "+65 6789 0123", "8 Ubi Road 2, Singapore 408538",
+                   instagram="@nookstudio.sg"),
+]

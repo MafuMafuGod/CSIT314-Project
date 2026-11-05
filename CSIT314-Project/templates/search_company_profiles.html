@@ -1,0 +1,42 @@
+<!-- «Boundary» SearchCompanyProfilesPage — #13 Search company profiles
+ Search by company name or keyword; "No matching company profiles were found" when nothing matches. -->
+
+{% extends "base.html" %}
+{% block title %}Search Company Profiles | 4RENO{% endblock %}
+{% block content %}
+
+<h1 style="text-align:left">Search Company Profiles</h1>
+<p class="sub">Search for company profiles by name or relevant keyword.</p>
+
+<form method="get" action="{{ url_for('search_company_profiles.searchCompanyProfiles') }}" novalidate>
+    <div class="search-row">
+        <div><label for="keyword">Company name or keyword</label>
+            <input id="keyword" type="text" name="keyword" value="{{ keyword }}" maxlength="100"
+                placeholder="Company name or keyword">
+        </div>
+        <button class="btn" type="submit">Search</button>
+    </div>
+    {% if error %}<p class="errtext">{{ error }}</p>{% endif %}
+</form>
+
+{% if searched and not error %}
+{% if results %}
+<p><strong>{{ results | length }} matching profile{{ '' if results | length == 1 else 's' }}</strong></p>
+<div class="cards">
+    {% for profile in results %}
+    <article class="card">
+        <h3 style="margin-top:0">{{ profile.companyName }}</h3>
+        <p>{{ profile.description }}</p>
+        <p class="sub" style="margin:4px 0">Email: {{ profile.businessEmail }}</p>
+        <p class="sub" style="margin:4px 0">Phone: {{ profile.businessPhone }}</p>
+        <p class="sub" style="margin:4px 0">Address: {{ profile.businessAddress }}</p>
+        {% if profile.website %}<p style="margin:8px 0 0"><a href="{{ profile.website }}" target="_blank"
+                rel="noopener noreferrer">Company Website</a></p>{% endif %}
+    </article>
+    {% endfor %}
+</div>
+{% else %}
+<div class="banner info">No matching company profiles were found.</div>
+{% endif %}
+{% endif %}
+{% endblock %}

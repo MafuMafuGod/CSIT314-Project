@@ -1,4 +1,5 @@
 """«Boundary» CompanyProfilePage — #09 Create, #10 View, #11 Update company profile
+(validateContactFields() is shared with #12 Manage contact information)
 (no class: company_view.html, company_form.html + route functions).
 Precondition (logged-in Interior Designer) is enforced by requireDesigner() in app.py.
 Fields and validation rules follow Dominic's design (app.py.backup)."""
@@ -16,13 +17,15 @@ COMPANY_PROFILE_FIELDS = ("companyName", "description", "businessEmail",
 REQUIRED_MESSAGES = {
     "companyName": "Please enter your company name.",
     "description": "Please enter a company description.",
+}
+CONTACT_REQUIRED_MESSAGES = {
     "businessEmail": "Please enter a business email.",
     "businessPhone": "Please enter a business phone number.",
     "businessAddress": "Please enter a business address.",
 }
 
-MAX_LENGTHS = {"companyName": 100, "description": 1000, "businessEmail": 100,
-               "businessPhone": 20, "businessAddress": 200, "website": 200}
+MAX_LENGTHS = {"companyName": 100, "description": 1000}
+CONTACT_MAX_LENGTHS = {"businessEmail": 100, "businessPhone": 20, "businessAddress": 200, "website": 200}
 
 SAVE_FAILED = "Unable to save company profile. Please try again."
 
@@ -40,6 +43,17 @@ def validateCompanyProfileForm(formData: dict) -> dict:
     for f, limit in MAX_LENGTHS.items():
         if len(formData[f]) > limit:
             fieldErrors[f] = f"Must be {limit} characters or fewer."
+    fieldErrors.update(validateContactFields(formData))
+    return fieldErrors
+
+
+def validateContactFields(formData: dict) -> dict:
+    """Boundary input check for the business contact fields, shared by #09 / #11 and #12:
+    email, phone and address required, valid formats, length limits. Returns fieldErrors."""
+    fieldErrors = {f: msg for f, msg in CONTACT_REQUIRED_MESSAGES.items() if not formData[f]}
+    for f, limit in CONTACT_MAX_LENGTHS.items():
+        if len(formData[f]) > limit:
+            fieldErrors[f] = f"Must be {limit} characters or fewer."
 
     email = formData["businessEmail"]
     if email and "businessEmail" not in fieldErrors and validateEmail(email):
@@ -50,7 +64,7 @@ def validateCompanyProfileForm(formData: dict) -> dict:
         fieldErrors["businessPhone"] = "Please enter a valid phone number (at least 8 digits)."
 
     website = formData["website"]
-    if website and not website.startswith(("http://", "https://")):
+    if website and "website" not in fieldErrors and not website.startswith(("http://", "https://")):
         fieldErrors["website"] = "Website must start with http:// or https://"
     return fieldErrors
 

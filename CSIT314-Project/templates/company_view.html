@@ -37,7 +37,10 @@
         <p>This is how customers see your interior design company.</p>
     </div>
     {% if companyProfile %}
-    <a class="btn" href="{{ url_for('company_profile.updateCompanyProfilePage') }}">Update Company Information</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a class="btn outline" href="{{ url_for('manage_contact_info.manageContactInfo') }}">Manage Contact Details</a>
+        <a class="btn" href="{{ url_for('company_profile.updateCompanyProfilePage') }}">Update Company Information</a>
+    </div>
     {% endif %}
 </div>
 
@@ -63,6 +66,9 @@
             <div class="v"><a href="{{ companyProfile.website }}" target="_blank" rel="noopener noreferrer">{{ companyProfile.website }}</a></div>
             {% else %}<div class="v none">Not provided</div>{% endif %}
         </div>
+        {% for key, label in [('instagram', 'Instagram'), ('facebook', 'Facebook'), ('linkedin', 'LinkedIn')] %}
+        {% if companyProfile[key] %}<div class="cp-item"><div class="k">{{ label }}</div><div class="v">{{ companyProfile[key] }}</div></div>{% endif %}
+        {% endfor %}
     </div>
 </div>
 {% endif %}
