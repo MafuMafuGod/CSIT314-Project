@@ -164,8 +164,9 @@ class InteriorDesignProject:
     def searchProjects(cls, designerU: str, status: str, keyword: str) -> list:
         """#56 step 3 / #61 step 3: the ID's current or past projects matching the keyword.
         [] if nothing matches (4a)."""
-        return [p for p in cls.getProjectsByStatus(designerU, status)
-                if cls._findIDP(p["idpID"])._matches(keyword, "")]
+        projects = [idp._toPortfolioDict() for idp in cls._getIDPsByDesigner(designerU)
+                    if idp._status == status and idp._matches(keyword, "")]
+        return sorted(projects, key=lambda p: p["idpID"], reverse=True)
 
     # ---- #62 / #63 / #64 Project reports -----------------------------------
     def _toSummary(self) -> dict:
