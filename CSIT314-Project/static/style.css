@@ -1,14 +1,10 @@
 :root {
     font-family: Inter, Arial, sans-serif;
     color: #353945;
-    background: #f4f7fb;
     --blue-900: #12365a;
     --blue-800: #174875;
     --blue-700: #1d5b91;
     --blue-600: #2675b9;
-    --blue-100: #e6f1fb;
-    --blue-050: #f3f8fd;
-    --border: #d9e3ed;
 }
 
 * {
@@ -181,7 +177,6 @@ footer {
     padding: 22px 5%;
     text-align: center;
     color: #607286;
-    background: #fff;
     border-top: 1px solid var(--border);
 }
 
@@ -193,8 +188,6 @@ h3 {
 
 .hero {
     padding: 44px;
-    border-radius: 18px;
-    background: var(--blue-100);
     margin-bottom: 34px;
 }
 
@@ -280,11 +273,9 @@ button:hover,
 .card,
 .detail,
 .formbox {
-    background: #fff;
     border: 1px solid var(--border);
     border-radius: 14px;
     padding: 20px;
-    box-shadow: 0 3px 12px rgb(22 58 92 / 4%);
 }
 
 .card .img,
@@ -293,7 +284,6 @@ button:hover,
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--blue-100);
     border-radius: 10px;
     color: #4b6885;
     overflow: hidden;
@@ -332,7 +322,6 @@ button:hover,
     display: inline-block;
     padding: 6px 12px;
     border-radius: 99px;
-    background: var(--blue-100);
     color: var(--blue-800);
     text-decoration: none;
 }
@@ -396,14 +385,11 @@ button:hover,
 
 .login-page .right {
     display: flex;
-    align-items: center;
-    justify-content: center;
     padding: clamp(24px, 6vw, 80px);
     background: var(--blue-050);
 }
 
 .login-page .formbox {
-    width: min(100%, 430px);
     padding: clamp(24px, 4vw, 42px);
 }
 
@@ -660,7 +646,6 @@ body.logout-standalone {
     margin: 0;
     color: #303039;
     font-size: .9rem;
-    line-height: 1.75;
 }
 
 .logout-login-button {
@@ -668,13 +653,10 @@ body.logout-standalone {
     align-items: center;
     justify-content: center;
     width: 100%;
-    min-height: 45px;
-    margin: 32px 0 18px;
     border-radius: 999px;
     background: #151515;
     color: #ffffff;
     text-decoration: none;
-    font-size: .9rem;
     font-weight: 600;
     transition: background .15s ease;
 }
@@ -1061,11 +1043,6 @@ body.logout-standalone {
     color: #9c2929;
 }
 
-.badge.invited {
-    background: #fff4d6;
-    color: #7a5b00;
-}
-
 /* Detail pages */
 .adm-back {
     display: inline-block;
@@ -1317,14 +1294,6 @@ body.logout-standalone {
 }
 
 /* Page heading */
-.create-user-heading {
-    margin-bottom: 18px;
-}
-
-.create-user-heading h1 {
-    margin: 0;
-    color: var(--blue-900);
-}
 
 /* Form container */
 .create-user-card {
@@ -1561,3 +1530,22 @@ form[action="/admin/profiles/create"] .adm-buttons {
         text-align: center;
     }
 }
+
+
+/* ---- Shared by several pages (moved here from the pages' own <style> blocks) ---- */
+
+/* Company profile and contact forms (#09, #11, #12) */
+.cp-form { max-width: 640px; }
+.cp-form h2 { margin: 22px 0 10px; font-size: 1rem; color: var(--blue-900); }
+.cp-form .req { color: #c0392b; }
+.cp-form .opt { font-weight: 400; color: #6b7280; font-size: .85rem; }
+.cp-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+
+/* Field error highlight and message (login, company profile and contact forms) */
+.formbox input.field-error, .formbox textarea.field-error { border-color: #c0392b; background: #fdf2f1; margin-bottom: 4px; }
+.field-warning { margin: 0 0 15px; color: #9c2929; font-size: .85rem; }
+
+/* "Nothing here yet" box (company profile, IDP interest) */
+.empty-state { padding: 40px 24px; text-align: center; background: #fff; border: 1px dashed var(--border); border-radius: 12px; }
+.empty-state h2 { margin: 0 0 6px; color: var(--blue-900); }
+.empty-state p { margin: 0 0 18px; color: #6b7280; }

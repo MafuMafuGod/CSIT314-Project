@@ -2,7 +2,6 @@
 from flask import Blueprint, render_template, session
 
 from control import ViewCurrentProjectController, ViewPastProjectController
-from boundary.portfolio_forms import KIND_LABELS
 
 view_portfolio = Blueprint("view_portfolio", __name__)
 
@@ -10,12 +9,12 @@ CONTROLLERS = {"current": ViewCurrentProjectController, "past": ViewPastProjectC
 
 
 def displayProject(kind: str, project: dict) -> str:                    # #53 step 4 / #58 step 3
-    return render_template("portfolio_view.html", kind=kind, kindLabels=KIND_LABELS,
+    return render_template("portfolio_view.html", kind=kind,
                            project=project, active="portfolio")
 
 
 def displayUnavailable(kind: str) -> str:                               # #53 3a / #58 2a
-    return render_template("portfolio_view.html", kind=kind, kindLabels=KIND_LABELS, project=None,
+    return render_template("portfolio_view.html", kind=kind, project=None,
                            error="This project's portfolio information is unavailable.",
                            active="portfolio")
 

@@ -1,8 +1,6 @@
-<!-- Home screen after login 
- quick search, category links, and small set of featured IDPs -->
+<!-- Home screen after login: quick search and category links -->
 
 {% extends "base.html" %}
-{% from "_macros.html" import idpCard %}
 {% block title %}Home | 4RENO{% endblock %}
 {% block content %}
 
@@ -23,11 +21,6 @@
 <h3>Browse by category</h3>
 <div class="chips">
     {% for c in categories %}<a class="chip" href="{{ url_for('search_idp.searchPage', category=c) }}">{{ c }}</a>{%
-    endfor %}
-</div>
-<h3>Featured projects</h3>
-<div class="cards">
-    {% for idp in featured %}{{ idpCard(idp, 'View Details', url_for('view_idp.viewIdpPage', idpID=idp.idpID)) }}{%
     endfor %}
 </div>
 {% endblock %}
