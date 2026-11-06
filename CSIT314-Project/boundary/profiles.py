@@ -5,8 +5,7 @@ import re
 
 from control import ProfileOptionsController
 
-ACCOUNT_STATUSES = ["active", "suspended"]          # filter values for #46
-PROFILE_STATUSES = ["active", "suspended"]          # filter values for #51
+STATUSES = ["active", "suspended"]                  # status filter values for #46 and #51
 MAX_NAME_LENGTH = 100
 MAX_SEARCH_LENGTH = 100
 MAX_PROFILE_NAME_LENGTH = 60
@@ -41,6 +40,34 @@ def validateEmail(u: str) -> str:
     if "@" not in u or "." not in u.split("@")[-1] or " " in u or len(u) > MAX_NAME_LENGTH:
         return "Please enter a valid email address."
     return ""
+
+
+def validateAccountDetails(name: str, u: str, profile: str, permissions: list,
+                           profileChoices: dict, permissionGroups: dict) -> dict:
+    """Boundary input check shared by #42 (step 6, 6a) and #44 (step 3, 5a): name, email,
+    a profile from the list and permissions from the list. Returns fieldErrors; {} = valid."""
+    fieldErrors = {}
+    if not name:
+        fieldErrors["name"] = "Please enter the user's name."
+    elif len(name) > MAX_NAME_LENGTH:
+        fieldErrors["name"] = f"Name must be {MAX_NAME_LENGTH} characters or fewer."
+    emailError = validateEmail(u)
+    if emailError:
+        fieldErrors["u"] = emailError
+    if profile not in profileChoices:
+        fieldErrors["profile"] = "Please select a profile."
+    elif findInvalidPermissions(permissions, permissionGroups):
+        fieldErrors["profile"] = "Please choose permissions from the list."
+    return fieldErrors
+
+
+def describePermissionChanges(before: list, after: list) -> str:
+    """The "What changed" text for permissions, shared by #44 and #49. "" = no change."""
+    added = [p for p in after if p not in before]
+    removed = [p for p in before if p not in after]
+    parts = (["Added " + ", ".join(added)] if added else []) + \
+            (["Removed " + ", ".join(removed)] if removed else [])
+    return "; ".join(parts)
 
 
 def validateReason(reason: str) -> str:

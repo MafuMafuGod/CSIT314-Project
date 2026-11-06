@@ -112,21 +112,27 @@ class TestControllers:
 
 # ---------------------------------------------------------------- Boundary validation
 class TestValidation:
+    CATS = [GOOD["category"]]
+
     def test_valid_current(self):
-        assert validateForm({**GOOD, "completionDate": ""}, "current") == {}
+        assert validateForm({**GOOD, "completionDate": ""}, "current", self.CATS) == {}
 
     def test_required_fields(self):                                        # #52 5a / #54 6a
-        errors = validateForm({f: "" for f in [*GOOD, "completionDate"]}, "current")
+        errors = validateForm({f: "" for f in [*GOOD, "completionDate"]}, "current", self.CATS)
         assert set(errors) == {"title", "description", "designs", "materials"}
 
     def test_past_needs_real_past_date(self):                              # #57 5a / #59 6a
-        assert "completionDate" in validateForm({**GOOD, "completionDate": ""}, "past")
-        assert "completionDate" in validateForm({**GOOD, "completionDate": TOMORROW}, "past")
-        assert "completionDate" in validateForm({**GOOD, "completionDate": "2026-02-30"}, "past")
-        assert validateForm({**GOOD, "completionDate": "2026-01-15"}, "past") == {}
+        assert "completionDate" in validateForm({**GOOD, "completionDate": ""}, "past", self.CATS)
+        assert "completionDate" in validateForm({**GOOD, "completionDate": TOMORROW}, "past", self.CATS)
+        assert "completionDate" in validateForm({**GOOD, "completionDate": "2026-02-30"}, "past", self.CATS)
+        assert validateForm({**GOOD, "completionDate": "2026-01-15"}, "past", self.CATS) == {}
+
+    def test_category_must_be_in_list(self):                               # #52 5a
+        assert "category" in validateForm({**GOOD, "category": "Not a category", "completionDate": ""},
+                                          "current", self.CATS)
 
     def test_too_long(self):
-        assert "title" in validateForm({**GOOD, "title": "x" * 101, "completionDate": ""}, "current")
+        assert "title" in validateForm({**GOOD, "title": "x" * 101, "completionDate": ""}, "current", self.CATS)
 
 
 # ---------------------------------------------------------------- Boundary pages

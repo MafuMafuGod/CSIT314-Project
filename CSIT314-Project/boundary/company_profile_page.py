@@ -56,11 +56,11 @@ def validateContactFields(formData: dict) -> dict:
             fieldErrors[f] = f"Must be {limit} characters or fewer."
 
     email = formData["businessEmail"]
-    if email and "businessEmail" not in fieldErrors and validateEmail(email):
+    if "businessEmail" not in fieldErrors and validateEmail(email):
         fieldErrors["businessEmail"] = "Please enter a valid email address."
 
     phone = formData["businessPhone"].replace(" ", "").replace("-", "").lstrip("+")
-    if formData["businessPhone"] and "businessPhone" not in fieldErrors and (not phone.isdigit() or len(phone) < 8):
+    if "businessPhone" not in fieldErrors and (not phone.isdigit() or len(phone) < 8):
         fieldErrors["businessPhone"] = "Please enter a valid phone number (at least 8 digits)."
 
     website = formData["website"]

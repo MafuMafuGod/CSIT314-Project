@@ -3,8 +3,8 @@
 from flask import Blueprint, render_template, request, session, abort
 
 from control import UpdateUserAccountController
-from boundary.profiles import (getAccountFormOptions, getProfileLabels, findInvalidPermissions,
-                               validateEmail, MAX_NAME_LENGTH)
+from boundary.profiles import (getAccountFormOptions, getProfileLabels, validateAccountDetails,
+                               describePermissionChanges)
 
 update_account = Blueprint("update_account", __name__)
 
@@ -28,19 +28,8 @@ def displayUpdateForm(accountU: str, userAccount: dict, fieldErrors: dict = None
 def validateUpdatedData(name: str, u: str, profile: str, permissions: list,
                         profileChoices: dict) -> dict:                   # step 3 (5a)
     """Boundary input check. Returns fieldErrors; empty dict = all valid."""
-    fieldErrors = {}
-    if not name:
-        fieldErrors["name"] = "Please enter the user's name."
-    elif len(name) > MAX_NAME_LENGTH:
-        fieldErrors["name"] = f"Name must be {MAX_NAME_LENGTH} characters or fewer."
-    emailError = validateEmail(u)
-    if emailError:
-        fieldErrors["u"] = emailError
-    if profile not in profileChoices:
-        fieldErrors["profile"] = "Please select a profile."
-    if findInvalidPermissions(permissions, getAccountFormOptions()["permissionGroups"]):
-        fieldErrors["profile"] = "Please choose permissions from the list."
-    return fieldErrors
+    return validateAccountDetails(name, u, profile, permissions, profileChoices,
+                                  getAccountFormOptions()["permissionGroups"])
 
 
 def listChanges(before: dict, after: dict) -> list:
@@ -54,12 +43,9 @@ def listChanges(before: dict, after: dict) -> list:
     if before["profile"] != after["profile"]:
         changes.append(("Profile", f"{labels.get(before['profile'], before['profile'])} → "
                                    f"{labels.get(after['profile'], after['profile'])}"))
-    added = [p for p in after["permissions"] if p not in before["permissions"]]
-    removed = [p for p in before["permissions"] if p not in after["permissions"]]
-    if added or removed:
-        parts = (["Added " + ", ".join(added)] if added else []) + \
-                (["Removed " + ", ".join(removed)] if removed else [])
-        changes.append(("Permissions", "; ".join(parts)))
+    permissionChanges = describePermissionChanges(before["permissions"], after["permissions"])
+    if permissionChanges:
+        changes.append(("Permissions", permissionChanges))
     return changes
 
 
@@ -91,9 +77,7 @@ def submitUpdate(accountU: str, before: dict, name: str, u: str, profile: str,
                 "u": "An account with this email already exists. Please use a different email."})
 
     # Step 4: save the updated details
-    updated = controller.updateUserAccount(accountU, name, u, profile, permissions)
-    if not updated:
-        abort(404)                       # the account was removed while being edited
+    controller.updateUserAccount(accountU, name, u, profile, permissions)
 
     # The admin edited their own account: keep their session in step with it
     if session.get("u", "").lower() == accountU.lower():

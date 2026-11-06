@@ -3,8 +3,7 @@
 from flask import Blueprint, render_template, request
 
 from control import CreateUserAccountController
-from boundary.profiles import (getAccountFormOptions, findInvalidPermissions, validateEmail,
-                               MAX_NAME_LENGTH)
+from boundary.profiles import getAccountFormOptions, validateAccountDetails
 
 create_account = Blueprint("create_account", __name__)
 
@@ -19,20 +18,10 @@ def validateAccountData(name: str, u: str, p: str, profile: str, permissions: li
                         options: dict) -> dict:                          # step 6 (6a)
     """Boundary input check: fields filled, in the right format, and choices from the lists.
     Returns fieldErrors, e.g. {"u": "..."}; empty dict = all valid."""
-    fieldErrors = {}
-    if not name:
-        fieldErrors["name"] = "Please enter the user's name."
-    elif len(name) > MAX_NAME_LENGTH:
-        fieldErrors["name"] = f"Name must be {MAX_NAME_LENGTH} characters or fewer."
-    emailError = validateEmail(u)
-    if emailError:
-        fieldErrors["u"] = emailError
+    fieldErrors = validateAccountDetails(name, u, profile, permissions,
+                                         options["profileOptions"], options["permissionGroups"])
     if not p:
         fieldErrors["p"] = "Please enter an initial password."
-    if profile not in options["profileOptions"]:
-        fieldErrors["profile"] = "Please select a profile."
-    if findInvalidPermissions(permissions, options["permissionGroups"]):
-        fieldErrors["profile"] = "Please choose permissions from the list."
     return fieldErrors
 
 

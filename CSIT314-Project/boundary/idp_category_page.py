@@ -113,9 +113,7 @@ def updateCategoryPage(categoryID: str) -> str:
     if errors:
         return displayCategoryForm("update", controller, form, errors, category)
 
-    if not controller.updateCategory(categoryID, form["name"], form["description"]):
-        return displayCategoryForm("update", controller, form,
-                                   {"name": "The category could not be saved. Please try again."}, category)
+    controller.updateCategory(categoryID, form["name"], form["description"])
     flash(f'Category "{form["name"]}" was updated.', "ok")
     return redirect(url_for("idp_category_management.viewCategoryPage", categoryID=categoryID))
 
@@ -128,7 +126,7 @@ def assignProjectPage(categoryID: str) -> str:
     if not category:
         abort(404)
     projectID = request.form.get("projectID", "").strip()
-    error = validateProjectChoice([projectID], controller.getProjects()) if projectID else "Select an available project."
+    error = validateProjectChoice([projectID], controller.getProjects())
     if error:
         return displayCategoryDetails(category, category["projects"], {"projectID": error})
     controller.assignProject(categoryID, int(projectID))
@@ -172,7 +170,7 @@ def deleteCategoryPage(categoryID: str) -> str:
     category = controller.getCategory(categoryID)
     if not category:
         abort(404)
-    linkedCount = controller.countLinkedProjects(categoryID)
+    linkedCount = category["projectCount"]
     if linkedCount:                                                      # blocked while projects remain
         flash(f"This category still has {linkedCount} linked project(s). Reassign them before deleting it.", "err")
         return redirect(url_for("idp_category_management.viewCategoryPage", categoryID=categoryID))

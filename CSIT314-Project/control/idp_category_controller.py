@@ -54,16 +54,14 @@ class UpdateIDPCategoryController(IDPCategoryController):
 
     def updateCategory(self, categoryID: str, name: str, description: str) -> bool:
         """Returns updated. Projects stay linked when the category is renamed."""
-        category = IDPCategory.getCategory(categoryID)
-        if not category or not IDPCategory.updateCategory(categoryID, name, description):
-            return False
-        InteriorDesignProject.renameCategory(category["name"], name)
-        return True
+        oldName = IDPCategory.getCategory(categoryID)["name"]
+        updated = IDPCategory.updateCategory(categoryID, name, description)
+        InteriorDesignProject.renameCategory(oldName, name)
+        return updated
 
     def assignProject(self, categoryID: str, projectID: int) -> bool:
         """Link a project to this category (moving it from its old one). Returns assigned."""
-        category = IDPCategory.getCategory(categoryID)
-        return bool(category) and InteriorDesignProject.setProjectCategory(projectID, category["name"])
+        return InteriorDesignProject.setProjectCategory(projectID, IDPCategory.getCategory(categoryID)["name"])
 
 
 class ViewIDPCategoryController(IDPCategoryController):
@@ -72,10 +70,6 @@ class ViewIDPCategoryController(IDPCategoryController):
 
 class DeleteIDPCategoryController(IDPCategoryController):
     """#68 Delete an IDP category that has no projects."""
-
-    def countLinkedProjects(self, categoryID: str) -> int:
-        """Returns linkedCount (deleting is blocked while it is above 0)."""
-        return self.getCategory(categoryID).get("projectCount", 0)
 
     def deleteCategory(self, categoryID: str) -> bool:
         """Returns deleted from the Entity."""

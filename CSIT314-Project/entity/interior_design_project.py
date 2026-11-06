@@ -84,7 +84,7 @@ class InteriorDesignProject:
     # ---- #32 Search IDPs -------------------------------------------------------
     @classmethod
     def getCategories(cls) -> list:
-        """#32 step 2 / portfolio form: every category in use, A-Z."""
+        """#32 step 2: every category in use, A-Z."""
         return sorted({idp._category for idp in cls._idps if idp._category})
 
     @classmethod

@@ -1,4 +1,5 @@
-"""«Boundary» UserLoginPage — #06 User Login, #31 Customer Login, #70 Platform Admin Login
+"""«Boundary» UserLoginPage — #06 User Login, #14 Interior Designer Login, #31 Customer Login,
+#70 Platform Admin Login
 (no class: login.html + route functions). One login page for every profile."""
 from flask import Blueprint, render_template, request, session, flash
 

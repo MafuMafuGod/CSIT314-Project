@@ -2,7 +2,8 @@
 4RENO - Interior Design Project (IDP) platform
 
 Use cases in this code:
-  #06 User Login  #07 User Logout  #31 Customer Login  #70 Platform Admin Login
+  #06 User Login  #07 User Logout  #14 / #15 Interior Designer Login / Logout
+  #31 Customer Login  #37 Customer Logout  #70 Platform Admin Login
   #09 Create  #10 View  #11 Update  Company Profile (Matthew)
   #12 Manage contact information  #13 Search company profiles
   #32 Search IDPs  #33 View IDP Details
@@ -77,8 +78,8 @@ def endSuspendedSessions():
 
 @app.before_request
 def requireLogin():
-    """Precondition for #07 / #37: only a logged-in user can log out.
-    #37 2a: if the session has already expired, the user is treated as logged out and
+    """Precondition for #07 / #15 / #37: only a logged-in user can log out.
+    #15 / #37 2a: if the session has already expired, the user is treated as logged out and
     sent to the login page."""
     if request.path == "/logout" and not session.get("u"):
         return redirect(url_for("login.loginPage"))

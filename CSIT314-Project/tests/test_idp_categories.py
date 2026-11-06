@@ -79,7 +79,7 @@ class TestControllers:
 
     def test_assign_moves_project(self):                                   # #66
         assert UpdateIDPCategoryController().assignProject("IDP-CAT-002", 1) is True
-        assert DeleteIDPCategoryController().countLinkedProjects("IDP-CAT-001") == 1
+        assert ViewIDPCategoryController().getCategory("IDP-CAT-001")["projectCount"] == 1
 
     def test_delete(self):                                                 # #68
         IDPCategory.createCategory("Garage", "")
