@@ -1291,3 +1291,273 @@ body.logout-standalone {
         grid-template-columns: 110px 1fr;
     }
 }
+
+/* ==========================================================
+   CREATE USER PAGE (#42)
+   ========================================================== */
+
+/* Shared layout for Create User and Create Profile pages. */
+.adm-form-page {
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 4px 0 32px;
+}
+
+/* Shared heading spacing for both pages. */
+.adm-form-page-heading {
+    margin-bottom: 18px;
+}
+
+.create-user-page {
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 4px 0 32px;
+}
+
+/* Page heading */
+.create-user-heading {
+    margin-bottom: 18px;
+}
+
+.create-user-heading h1 {
+    margin: 0;
+    color: var(--blue-900);
+}
+
+/* Form container */
+.create-user-card {
+    padding: clamp(20px, 3vw, 30px);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 3px 12px rgb(22 58 92 / 5%);
+}
+
+/* Stack all form fields vertically */
+.create-user-fields {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+}
+
+.create-user-form .adm-field {
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 18px;
+}
+
+.create-user-form .adm-field label {
+    display: block;
+    margin-bottom: 7px;
+    color: #353945;
+    font-weight: 600;
+}
+
+.create-user-form .adm-field input,
+.create-user-form .adm-field select {
+    display: block;
+    width: 100%;
+    min-height: 46px;
+    padding: 10px 12px;
+    border: 1px solid #d5dbe3;
+    border-radius: 8px;
+    background: #fff;
+    color: #353945;
+    font: inherit;
+}
+
+.create-user-form .adm-field input:focus,
+.create-user-form .adm-field select:focus {
+    outline: none;
+    border-color: var(--blue-600);
+    box-shadow: 0 0 0 3px rgb(38 117 185 / 12%);
+}
+
+.create-user-form .adm-field input.bad,
+.create-user-form .adm-field select.bad {
+    border-color: #c0392b;
+    background: #fffafa;
+}
+
+/* Form buttons */
+.create-user-form-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 4px;
+    padding-top: 18px;
+    border-top: 1px solid #edf0f4;
+}
+
+.create-user-actions {
+    align-items: center;
+    gap: 10px;
+}
+
+.create-user-actions .btn,
+.create-user-actions button {
+    min-height: 42px;
+    padding: 9px 17px;
+    border-radius: 8px;
+    font-size: .92rem;
+}
+
+.create-user-actions button {
+    background: #353945;
+}
+
+.create-user-actions button:hover {
+    background: #252a34;
+}
+
+/* Success confirmation */
+.create-user-success {
+    max-width: 680px;
+    margin: 12px auto 0;
+    text-align: center;
+}
+
+.create-user-success h1 {
+    margin: 0;
+    color: var(--blue-900);
+}
+
+.create-user-intro {
+    margin: 8px 0 22px;
+    color: #687386;
+}
+
+.create-user-success-icon {
+    display: grid;
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 16px;
+    place-items: center;
+    border-radius: 50%;
+    background: #e9f6ee;
+    color: #287447;
+    font-size: 1.45rem;
+    font-weight: 700;
+}
+
+.create-user-summary {
+    text-align: left;
+}
+
+.create-user-summary h2 {
+    margin: 0 0 16px;
+    color: #293241;
+    font-size: 1.1rem;
+}
+
+.create-user-status {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: #e9f6ee;
+    color: #287447;
+    font-size: .82rem;
+    font-weight: 650;
+}
+
+.create-user-summary .create-user-actions {
+    justify-content: flex-end;
+    margin-top: 22px;
+}
+
+/* Mobile layout */
+@media (max-width: 640px) {
+    .create-user-page {
+        padding-top: 0;
+    }
+
+    .create-user-actions {
+        width: 100%;
+        flex-direction: column-reverse;
+    }
+
+    .create-user-actions .btn,
+    .create-user-actions button {
+        width: 100%;
+        text-align: center;
+    }
+
+    .create-user-summary .adm-dl {
+        grid-template-columns: 105px minmax(0, 1fr);
+    }
+}
+
+/* Page heading */
+main > a.adm-back[href="/admin/profiles"] + h1 {
+    margin-bottom: 20px;
+    color: #252b35;
+}
+
+/* Match the Create User form card */
+form[action="/admin/profiles/create"] {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: clamp(22px, 4vw, 34px);
+    border-radius: 16px;
+    border-color: #e3e7ed;
+    box-shadow: 0 8px 28px rgb(28 39 56 / 6%);
+}
+
+/* Stack Profile Name and Start From vertically */
+form[action="/admin/profiles/create"] .adm-two {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+}
+
+/* Form field spacing */
+form[action="/admin/profiles/create"] .adm-field {
+    margin-bottom: 18px;
+}
+
+/* Field labels */
+form[action="/admin/profiles/create"] .adm-field label {
+    margin-bottom: 8px;
+    color: #394354;
+    font-size: .91rem;
+    font-weight: 650;
+}
+
+/* Input and dropdown styling */
+form[action="/admin/profiles/create"] input[type="text"],
+form[action="/admin/profiles/create"] select {
+    min-height: 48px;
+    padding: 11px 13px;
+    border: 1px solid #d7dde6;
+    border-radius: 9px;
+    font-size: .95rem;
+}
+
+/* Input focus effect */
+form[action="/admin/profiles/create"] input:focus,
+form[action="/admin/profiles/create"] select:focus {
+    outline: none;
+    border-color: var(--blue-600);
+    box-shadow: 0 0 0 3px rgb(55 126 190 / 13%);
+}
+
+/* Bottom button section */
+form[action="/admin/profiles/create"] .adm-buttons {
+    margin-top: 8px;
+    padding-top: 22px;
+    border-top: 1px solid #edf0f4;
+}
+
+/* Mobile buttons */
+@media (max-width: 640px) {
+    form[action="/admin/profiles/create"] .adm-buttons {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    form[action="/admin/profiles/create"] .adm-buttons .btn,
+    form[action="/admin/profiles/create"] .adm-buttons button {
+        width: 100%;
+        text-align: center;
+    }
+}
