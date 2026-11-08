@@ -18,10 +18,10 @@ def displayLoginForm(error: str = None, u: str = "", missingFields: list = None)
 def validateFields(u: str, p: str) -> list:                              # step 4
     """Boundary input check: all required fields filled.
     Returns missingFields, e.g. ["u", "p"]; empty list = all filled."""
-    missingFields = []
-    if not u:
+    missingFields = []   # names of the empty fields
+    if not u:            # email left empty
         missingFields.append("u")
-    if not p:
+    if not p:            # password left empty
         missingFields.append("p")
     return missingFields
 
