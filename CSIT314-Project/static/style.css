@@ -603,23 +603,6 @@ body.logout-standalone {
     line-height: 1.65;
 }
 
-.logout-image-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 104px;
-    height: 81px;
-    margin: 48px auto 0;
-    border-radius: 4px;
-    background: #ffffff;
-}
-
-.logout-image-placeholder svg {
-    width: 82px;
-    height: 60px;
-    fill: #353945;
-}
-
 .logout-page .logout-confirmation {
     display: flex;
     align-items: center;
@@ -640,12 +623,6 @@ body.logout-standalone {
     color: #303039;
     font-size: clamp(1.15rem, 1.8vw, 1.5rem);
     line-height: 1.35;
-}
-
-.logout-message>p:not(.logout-signup) {
-    margin: 0;
-    color: #303039;
-    font-size: .9rem;
 }
 
 .logout-login-button {
