@@ -11,12 +11,6 @@
 {% macro fieldError(name) %}{% if fieldErrors[name] %}<p class="adm-error">{{ fieldErrors[name] }}</p>{% endif %}{%
 endmacro %}
 
-{% if creating %}
-<a class="adm-back" href="{{ url_for('portfolio.portfolioPage', kind=kind) }}">&lsaquo; Back to portfolio</a>
-{% else %}
-<a class="adm-back" href="{{ url_for('view_portfolio.viewProjectPage', kind=kind, idpID=idpID) }}">&lsaquo; Back to
-    project</a>
-{% endif %}
 <h1 style="margin-top:0;text-align:left">{{ heading }}</h1>
 
 {% if error %}<div class="banner err" role="alert">{{ error }}</div>

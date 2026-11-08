@@ -46,8 +46,7 @@
 <div class="adm-empty">
     <h2>{{ 'No categories found' if searched else 'No categories yet' }}</h2>
     <p>{{ 'Try a different keyword.' if searched else 'Create the first category for IDPs.' }}</p>
-    <a class="btn" href="{{ url_for('idp_category_management.categoryListPage') if searched else url_for('idp_category_management.createCategoryPage') }}">{{
-        'Clear search' if searched else 'Create category' }}</a>
+    {% if searched %}<a class="btn" href="{{ url_for('idp_category_management.categoryListPage') }}">Clear search</a>{% endif %}
 </div>
 {% endif %}
 

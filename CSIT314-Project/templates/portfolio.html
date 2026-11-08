@@ -74,8 +74,6 @@
 <div class="adm-empty">
     <h2>No {{ kindLabels[kind] | lower }}s yet</h2>
     <p>Create a portfolio so the project's details, designs and materials are kept in one place.</p>
-    <a class="btn" href="{{ url_for('create_portfolio.openCreatePage', kind=kind) }}">Create {{ kindLabels[kind] }}
-        Portfolio</a>
 </div>
 {% endif %}
 

@@ -6,11 +6,6 @@
 {% block title %}{{ 'Create' if creating else 'Edit' }} category | 4RENO{% endblock %}
 {% block content %}
 
-{% if creating %}
-<a class="adm-back" href="{{ url_for('idp_category_management.categoryListPage') }}">&lsaquo; Back to categories</a>
-{% else %}
-<a class="adm-back" href="{{ url_for('idp_category_management.viewCategoryPage', categoryID=category.categoryID) }}">&lsaquo; Back to category</a>
-{% endif %}
 <h1 style="margin-top:0;text-align:left">{{ 'Create category' if creating else 'Edit category' }}</h1>
 
 <form class="formbox adm-form" method="post" novalidate

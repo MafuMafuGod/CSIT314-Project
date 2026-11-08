@@ -6,10 +6,6 @@
 {% block content %}
 
 <div class="create-user-page">
-    <a class="adm-back" href="{{ url_for('user_management.userManagementPage') }}">
-        <span aria-hidden="true">&larr;</span> Back to users
-    </a>
-
     {% if successMessage %}
     <!-- Confirmation shown after the account has been created. -->
     <section class="create-user-success" role="status">

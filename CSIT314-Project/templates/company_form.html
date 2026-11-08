@@ -22,7 +22,6 @@
 {% if fieldErrors[name] %}<p class="field-warning">{{ fieldErrors[name] }}</p>{% endif %}
 {% endmacro %}
 
-<p><a href="{{ url_for('company_profile.viewCompanyProfilePage') }}">&lsaquo; Back to Company Profile</a></p>
 <h1 style="text-align:left">{{ 'Create Company Profile' if creating else 'Update Company Information' }}</h1>
 
 {% if error %}<div class="banner err" role="alert">{{ error }}</div>
