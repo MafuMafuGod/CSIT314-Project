@@ -1,4 +1,4 @@
-"""«Control» UserLogoutController — #07 User Logout, #37 Customer Logout."""
+"""«Control» UserLogoutController — #07 User Logout, #15 Interior Designer Logout, #37 Customer Logout."""
 from entity import UserSession
 
 

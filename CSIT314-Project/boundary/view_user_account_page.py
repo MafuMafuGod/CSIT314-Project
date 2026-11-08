@@ -4,7 +4,7 @@ The list and the search share one page: no search words = the full list (#43).""
 from flask import Blueprint, render_template, request, abort, flash
 
 from control import ViewUserAccountController, SearchUserAccountController
-from boundary.profiles import getProfileLabels, ACCOUNT_STATUSES, MAX_SEARCH_LENGTH
+from boundary.profiles import getProfileLabels, STATUSES, MAX_SEARCH_LENGTH
 
 user_management = Blueprint("user_management", __name__)
 
@@ -22,7 +22,7 @@ def validateSearchCriteria(q: str, status: str, profile: str) -> str:  # #46 ste
     """Boundary input check. Returns an error message, "" = valid."""
     if len(q) > MAX_SEARCH_LENGTH:
         return f"Search words must be {MAX_SEARCH_LENGTH} characters or fewer."
-    if status and status not in ACCOUNT_STATUSES:
+    if status and status not in STATUSES:
         return "Please choose a status from the list."
     if profile and profile not in getProfileLabels():
         return "Please choose a profile from the list."

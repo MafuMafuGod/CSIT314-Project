@@ -1,4 +1,4 @@
-"""«Entity» UserAccount — used by #06 / #31 / #70 Login, #42 Create, #43 View, #44 Update,
+"""«Entity» UserAccount — used by #06 / #14 / #31 / #70 Login, #42 Create, #43 View, #44 Update,
 #45 Suspend and #46 Search User Account."""
 from datetime import date, datetime
 from typing import Optional
@@ -42,17 +42,17 @@ class UserAccount:
                 "lastSignIn": self._lastSignIn, "suspendedOn": self._suspendedOn,
                 "suspendReason": self._suspendReason}
 
-    # ---- #06 / #31 / #70 Login ----------------------------------------------
+    # ---- #06 / #14 / #31 / #70 Login ----------------------------------------------
     @classmethod
     def userAccountLogin(cls, u: str, p: str) -> bool:
-        """#06 step 5 / #31 step 6 / #70: verify credentials. A suspended account cannot
+        """#06 step 5 / #14 / #31 step 6 / #70: verify credentials. A suspended account cannot
         log in (#45 step 6)."""
         account = cls._findAccount(u)
         return account is not None and account._p == p and account._status == "active"
 
     @classmethod
     def getProfile(cls, u: str) -> str:
-        """#06 step 6 / #31 step 7 / #70: return the user's assigned profile."""
+        """#06 step 6 / #14 / #31 step 7 / #70: return the user's assigned profile."""
         account = cls._findAccount(u)
         return account._profile if account else ""
 

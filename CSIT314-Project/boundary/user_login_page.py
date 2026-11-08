@@ -1,6 +1,7 @@
-"""«Boundary» UserLoginPage — #06 User Login, #31 Customer Login, #70 Platform Admin Login
+"""«Boundary» UserLoginPage — #06 User Login, #14 Interior Designer Login, #31 Customer Login,
+#70 Platform Admin Login
 (no class: login.html + route functions). One login page for every profile."""
-from flask import Blueprint, render_template, request, session, flash
+from flask import Blueprint, render_template, request, session, flash, redirect, url_for
 
 from control import UserLoginController
 from boundary.profiles import getProfileLabels
@@ -35,7 +36,7 @@ def displayLoginError(u: str) -> str:                                    # 3a
 
 def displayLoginSuccess(profile: str) -> str:                               # step 6
     flash(f"Logged in successfully as {getProfileLabels().get(profile, profile)}.", "ok")
-    return render_template("home.html", categories=[], featured=[])
+    return redirect(url_for("home.displayHome"))
 
 
 def submitLogin(u: str, p: str) -> str:

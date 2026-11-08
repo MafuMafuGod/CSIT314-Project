@@ -1,4 +1,4 @@
-"""«Entity» UserSession — used by #07 / #37 Logout."""
+"""«Entity» UserSession — used by #07 / #15 / #37 Logout."""
 from flask import session
 
 

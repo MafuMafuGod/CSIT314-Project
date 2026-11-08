@@ -3,7 +3,7 @@
 from flask import Blueprint, render_template, request, abort
 
 from control import UpdateUserProfileController, ProfileOptionsController
-from boundary.profiles import validateProfileDetails
+from boundary.profiles import validateProfileDetails, describePermissionChanges
 
 update_profile = Blueprint("update_profile", __name__)
 
@@ -23,12 +23,9 @@ def listChanges(before: dict, after: dict) -> list:
         changes.append(("Profile name", f"{before['name']} → {after['name']}"))
     if before["description"] != after["description"]:
         changes.append(("Description", after["description"] or "(removed)"))
-    added = [p for p in after["permissions"] if p not in before["permissions"]]
-    removed = [p for p in before["permissions"] if p not in after["permissions"]]
-    if added or removed:
-        parts = (["Added " + ", ".join(added)] if added else []) + \
-                (["Removed " + ", ".join(removed)] if removed else [])
-        changes.append(("Permissions", "; ".join(parts)))
+    permissionChanges = describePermissionChanges(before["permissions"], after["permissions"])
+    if permissionChanges:
+        changes.append(("Permissions", permissionChanges))
     return changes
 
 
