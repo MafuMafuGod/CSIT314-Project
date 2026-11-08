@@ -1,0 +1,93 @@
+<!-- «Boundary» CreateUserAccountPage (#42)
+ Create user form, validation errors (6a / 6b), "Account summary" confirmation (step 8) -->
+
+{% extends "base.html" %}
+{% block title %}Create user | 4RENO{% endblock %}
+{% block content %}
+
+<div class="create-user-page">
+    {% if successMessage %}
+    <!-- Confirmation shown after the account has been created. -->
+    <section class="create-user-success" role="status">
+        <div class="create-user-success-icon" aria-hidden="true">&#10003;</div>
+        <h1>User created successfully</h1>
+        <p class="create-user-intro">{{ successMessage }}</p>
+
+        <div class="create-user-card create-user-summary">
+            <h2>Account summary</h2>
+            <dl class="adm-dl">
+                <dt>Full name</dt>
+                <dd>{{ request.form.get('name') }}</dd>
+                <dt>Email</dt>
+                <dd>{{ request.form.get('u') }}</dd>
+                <dt>Profile</dt>
+                <dd>{{ profileLabels.get(request.form.get('profile'), '—') }}</dd>
+                <dt>Status</dt>
+                <dd><span class="create-user-status">Active</span></dd>
+            </dl>
+            <div class="adm-buttons create-user-actions">
+                <a class="btn outline" href="{{ url_for('user_management.userManagementPage') }}">Back to users</a>
+                <a class="btn" href="{{ url_for('create_account.createAccountPage') }}">Create another user</a>
+            </div>
+        </div>
+    </section>
+
+    {% else %}
+    <!-- Use one page heading only; base.html already supplies the site navigation. -->
+    <div class="adm-head adm-form-page-heading">
+        <div>
+            <h1>Create user</h1>
+        </div>
+    </div>
+
+    <form class="create-user-card create-user-form" method="post"
+        action="{{ url_for('create_account.createAccountPage') }}" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <!-- Keep each field in its own full-width row. -->
+        <div class="create-user-fields">
+            <div class="adm-field">
+                <label for="name">Full name</label>
+                <input id="name" type="text" name="name" maxlength="100" placeholder="Enter full name"
+                    value="{{ request.form.get('name', '') }}" class="{{ 'bad' if fieldErrors.name }}">
+                {% if fieldErrors.name %}<p class="adm-error">{{ fieldErrors.name }}</p>{% endif %}
+            </div>
+
+            <div class="adm-field">
+                <label for="u">Email address</label>
+                <input id="u" type="email" name="u" maxlength="100" placeholder="name@example.com"
+                    value="{{ request.form.get('u', '') }}" class="{{ 'bad' if fieldErrors.u }}">
+                {% if fieldErrors.u %}<p class="adm-error">{{ fieldErrors.u }}</p>{% endif %}
+            </div>
+
+            <div class="adm-field">
+                <label for="profile">User profile</label>
+                <select id="profile" name="profile" class="{{ 'bad' if fieldErrors.profile }}">
+                    <option value="">Select a profile</option>
+                    {% for value, label in profileOptions.items() %}
+                    <option value="{{ value }}" {{ 'selected' if request.form.get('profile')==value }}>{{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+                {% if fieldErrors.profile %}<p class="adm-error">{{ fieldErrors.profile }}</p>{% endif %}
+            </div>
+
+            <div class="adm-field">
+                <label for="p">Initial password</label>
+                <input id="p" type="password" name="p" autocomplete="new-password"
+                    placeholder="Enter an initial password" class="{{ 'bad' if fieldErrors.p }}">
+                {% if fieldErrors.p %}<p class="adm-error">{{ fieldErrors.p }}</p>{% endif %}
+            </div>
+        </div>
+
+        <div class="create-user-form-footer">
+            <div class="adm-buttons create-user-actions">
+                <a class="btn outline" href="{{ url_for('user_management.userManagementPage') }}">Cancel</a>
+                <button type="submit">Create user</button>
+            </div>
+        </div>
+    </form>
+    {% endif %}
+</div>
+
+{% endblock %}

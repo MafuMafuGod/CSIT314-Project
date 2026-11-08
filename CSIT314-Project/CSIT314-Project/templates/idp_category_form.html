@@ -1,0 +1,49 @@
+<!-- «Boundary» IDPCategoryPage — #65 Create (mode = "create", optional projects to link)
+ and #66 Update (mode = "update", filled with the existing details). -->
+
+{% extends "base.html" %}
+{% set creating = mode == 'create' %}
+{% block title %}{{ 'Create' if creating else 'Edit' }} category | 4RENO{% endblock %}
+{% block content %}
+
+<h1 style="margin-top:0;text-align:left">{{ 'Create category' if creating else 'Edit category' }}</h1>
+
+<form class="formbox adm-form" method="post" novalidate
+    action="{{ url_for('idp_category_management.createCategoryPage') if creating else url_for('idp_category_management.updateCategoryPage', categoryID=category.categoryID) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="adm-field">
+        <label for="name">Category name</label>
+        <input id="name" type="text" name="name" maxlength="80" value="{{ form.name }}" placeholder="e.g. Bathroom"
+            class="{{ 'bad' if errors.name }}">
+        {% if errors.name %}<p class="adm-error">{{ errors.name }}</p>{% endif %}
+    </div>
+    <div class="adm-field">
+        <label for="description">Description <span class="sub">(optional)</span></label>
+        <input id="description" type="text" name="description" maxlength="500" value="{{ form.description }}"
+            class="{{ 'bad' if errors.description }}">
+        {% if errors.description %}<p class="adm-error">{{ errors.description }}</p>{% endif %}
+    </div>
+
+    {% if creating %}
+    <fieldset class="adm-perms-box">
+        <legend>Link projects now <span class="sub">(optional)</span></legend>
+        <p class="sub" style="margin-top:0">A ticked project moves to this category.</p>
+        <div class="adm-perms">
+            {% for p in projects %}
+            <label class="adm-check">
+                <input type="checkbox" name="projectIDs" value="{{ p.projectID }}" {{ 'checked' if p.projectID|string in form.projectIDs }}>
+                {{ p.name }} <span class="sub">({{ p.category or 'no category' }})</span>
+            </label>
+            {% endfor %}
+        </div>
+    </fieldset>
+    {% if errors.projects %}<p class="adm-error" style="margin-top:-8px">{{ errors.projects }}</p>{% endif %}
+    {% endif %}
+
+    <div class="adm-buttons">
+        <a class="btn outline" href="{{ url_for('idp_category_management.categoryListPage') if creating else url_for('idp_category_management.viewCategoryPage', categoryID=category.categoryID) }}">Cancel</a>
+        <button type="submit">{{ 'Create category' if creating else 'Save changes' }}</button>
+    </div>
+</form>
+{% endblock %}

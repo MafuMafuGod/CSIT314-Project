@@ -1,0 +1,100 @@
+<!-- «Boundary» PortfolioManagementPage
+ #53 / #58 step 1: the ID's current or past projects, #56 / #61: keyword search (4a no results),
+ Create Portfolio choice (#52 / #57 step 1) and Delete pop-ups (#55 / #60) -->
+
+{% extends "base.html" %}
+{% from "_portfolio_macros.html" import deleteModal with context %}
+{% block title %}My Portfolio | 4RENO{% endblock %}
+{% block content %}
+
+<div class="adm-head">
+    <div>
+        <h1>My Portfolio</h1>
+        <p class="sub">Keep each project's details, designs and materials in one place.</p>
+    </div>
+    <!-- #52 / #57 step 1: Create Portfolio, then choose Current Project or Past Project -->
+    <a class="btn" href="#create-choice">Create Portfolio</a>
+</div>
+
+<nav class="adm-tabs" aria-label="Portfolio sections">
+    {% for k, label in kindLabels.items() %}
+    <a href="{{ url_for('portfolio.portfolioPage', kind=k) }}" class="{{ 'on' if kind == k }}">{{ label }}s</a>
+    {% endfor %}
+</nav>
+
+<form class="adm-filters" method="get" action="{{ url_for('portfolio.portfolioPage') }}">
+    <input type="hidden" name="kind" value="{{ kind }}">
+    <input type="search" name="q" value="{{ keyword }}" maxlength="100"
+        placeholder="Search your {{ kindLabels[kind] | lower }}s by title, description, designs or materials"
+        aria-label="Search portfolio">
+    <button type="submit">Search</button>
+</form>
+
+{% if projects %}
+<div class="adm-count">
+    <span>{{ projects | length }} {{ kindLabels[kind] | lower }}{{ '' if projects | length == 1 else 's' }}
+        {{ 'found' if searched }}</span>
+    {% if searched %}<a href="{{ url_for('portfolio.portfolioPage', kind=kind) }}">Clear search</a>{% endif %}
+</div>
+<table class="adm-table">
+    <thead>
+        <tr>
+            <th>Project</th>
+            <th>Category</th>
+            <th>{{ 'Completed' if kind == 'past' else 'Added' }}</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in projects %}
+        <tr>
+            <td class="strong"><a href="{{ url_for('view_portfolio.viewProjectPage', kind=kind, idpID=p.idpID) }}">{{
+                    p.title }}</a></td>
+            <td>{{ p.category or '—' }}</td>
+            <td>{{ p.completionDate if kind == 'past' else p.createdDate }}</td>
+            <td class="pf-actions">
+                <a href="{{ url_for('update_portfolio.editProjectPage', kind=kind, idpID=p.idpID) }}">Edit</a>
+                <a href="#delete-{{ p.idpID }}">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% for p in projects %}{{ deleteModal(kind, p) }}{% endfor %}
+
+{% elif searched %}
+<!-- #56 / #61 alternate flow 4a -->
+<div class="adm-empty">
+    <h2>No matching results were found</h2>
+    <p>Try a different keyword.</p>
+    <a class="btn" href="{{ url_for('portfolio.portfolioPage', kind=kind) }}">Clear search</a>
+</div>
+
+{% else %}
+<div class="adm-empty">
+    <h2>No {{ kindLabels[kind] | lower }}s yet</h2>
+    <p>Create a portfolio so the project's details, designs and materials are kept in one place.</p>
+</div>
+{% endif %}
+
+<!-- Create Portfolio choice -->
+<div id="create-choice" class="adm-modal">
+    <div class="adm-modal-box">
+        <h2>Create Portfolio</h2>
+        <p class="sub">Which kind of project is it?</p>
+        <div class="pf-choices">
+            <a class="btn" href="{{ url_for('create_portfolio.openCreatePage', kind='current') }}">Current Project</a>
+            <a class="btn" href="{{ url_for('create_portfolio.openCreatePage', kind='past') }}">Past Project</a>
+        </div>
+        <div class="adm-buttons" style="margin-top:14px"><a class="btn outline" href="#">Cancel</a></div>
+    </div>
+</div>
+
+<style>
+    .pf-actions { white-space: nowrap; text-align: right; }
+    .pf-actions a { margin-left: 14px; }
+    .pf-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .pf-choices .btn { text-align: center; }
+    @media (max-width: 640px) { .adm-table th:nth-child(2), .adm-table td:nth-child(2) { display: none; } }
+</style>
+{% endblock %}

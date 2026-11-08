@@ -1,0 +1,63 @@
+<!-- «Boundary» ViewPortfolioPage — #53 View current project / #58 View past project
+ Details, designs, materials and status; Edit (#54 / #59) and Delete pop-up (#55 / #60).
+ #53 3a / #58 2a: information unavailable -> message + back to portfolio management. -->
+
+{% extends "base.html" %}
+{% from "_portfolio_macros.html" import deleteModal with context %}
+{% block title %}{{ project.title if project else 'Project' }} | 4RENO{% endblock %}
+{% block content %}
+
+<a class="adm-back" href="{{ url_for('portfolio.portfolioPage', kind=kind) }}">&lsaquo; Back to portfolio</a>
+
+{% if not project %}
+<div class="banner err" role="alert">{{ error }}</div>
+
+{% else %}
+<div class="adm-title-row">
+    <div>
+        <h1>{{ project.title }}</h1>
+        <p class="sub">{{ project.category or 'No category' }} &middot;
+            {% if kind == 'past' %}Completed {{ project.completionDate }}{% else %}Added {{ project.createdDate }}{%
+            endif %}</p>
+    </div>
+    <div class="adm-actions">
+        <span class="badge {{ 'active' if kind == 'current' else '' }}">{{ project.status }}</span>
+        <a class="btn" href="{{ url_for('update_portfolio.editProjectPage', kind=kind, idpID=project.idpID) }}">Edit</a>
+        <a class="btn outline" href="#delete-{{ project.idpID }}">Delete</a>
+    </div>
+</div>
+
+<section class="adm-card">
+    <h2>Project details</h2>
+    <p class="pf-text">{{ project.description }}</p>
+</section>
+
+<div class="adm-grid">
+    <section class="adm-card">
+        <h2>Designs</h2>
+        <p class="pf-text">{{ project.designs }}</p>
+    </section>
+    <section class="adm-card">
+        <h2>Materials</h2>
+        <p class="pf-text">{{ project.materials }}</p>
+    </section>
+</div>
+
+<section class="adm-card">
+    <h2>Status</h2>
+    <dl class="adm-dl">
+        <dt>Status</dt>
+        <dd>{{ project.status }}</dd>
+        <dt>Added to portfolio</dt>
+        <dd>{{ project.createdDate }}</dd>
+        {% if kind == 'past' %}<dt>Completion date</dt>
+        <dd>{{ project.completionDate }}</dd>{% endif %}
+    </dl>
+</section>
+
+{{ deleteModal(kind, project) }}
+<style>
+    .pf-text { margin: 0; white-space: pre-line; }
+</style>
+{% endif %}
+{% endblock %}

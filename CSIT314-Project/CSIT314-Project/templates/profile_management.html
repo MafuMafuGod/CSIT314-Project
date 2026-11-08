@@ -1,0 +1,81 @@
+<!-- ViewUserProfilePage (#48) & SearchUserProfilesPage (#51) -->
+{% extends "base.html" %}
+{% block title %}Profiles | 4RENO{% endblock %}
+{% block content %}
+{% from "_admin_macros.html" import statusBadge %}
+
+{# Read what the admin typed in the search boxes (empty if nothing) #}
+{% set q = request.args.get('q', '') %}
+{% set status = request.args.get('status', '') %}
+{% set searching = q or status %}
+
+<div class="adm-head">
+    <div>
+        <h1>User Management</h1>
+        <p class="sub">Create, view, update, suspend and search user profiles (roles).</p>
+    </div>
+    <a class="btn" href="/admin/profiles/create">Create profile</a>
+</div>
+
+{% set adm_tab = 'profiles' %}
+{% include "_admin_tabs.html" %}
+
+<!-- #51: search form -->
+<form class="adm-filters" method="get" action="/admin/profiles">
+    <input type="search" name="q" value="{{ q }}" placeholder="Search by profile name" aria-label="Search profiles">
+    <select name="status" aria-label="Filter by status">
+        <option value="">All statuses</option>
+        {% for s in ['active', 'suspended'] %}
+        <option value="{{ s }}" {{ 'selected' if status==s }}>{{ s | capitalize }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Search</button>
+</form>
+
+{% if profiles %}
+<div class="adm-count">
+    <span>Showing {{ profiles | length }} of {{ totalProfiles }} profile{{ '' if totalProfiles == 1 else 's' }}</span>
+    {% if searching %}<a href="/admin/profiles">Clear filters</a>{% endif %}
+</div>
+
+<table class="adm-table">
+    <thead>
+        <tr>
+            <th>Profile</th>
+            <th>Description</th>
+            <th>Permissions</th>
+            <th>Users</th>
+            <th>Status</th>
+            <th>Created</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in profiles %}
+        <tr>
+            <td class="strong"><a href="/admin/profiles/view/{{ p.name | urlencode }}">{{ p.name }}</a></td>
+            <td>{{ p.description or '—' }}</td>
+            <td>{{ p.permissions | length }} of {{ totalPermissions }}</td>
+            <td>{{ p.userCount }}</td>
+            <td>{{ statusBadge(p.status) }}</td>
+            <td>{{ p.created or '—' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% elif searching %}
+<!-- #51 alternate flow 4a: nothing matched the search -->
+<div class="adm-empty">
+    <h2>No user profiles found</h2>
+    <p>Check the spelling, try part of the profile name, or remove the status filter.</p>
+    <a class="btn" href="/admin/profiles">Clear search and filters</a>
+</div>
+
+{% else %}
+<!-- #48 alternate flow 5a: there are no profiles at all -->
+<div class="adm-empty">
+    <h2>No user profiles available</h2>
+    <p>Create a profile to give a role its own permissions.</p>
+</div>
+{% endif %}
+{% endblock %}

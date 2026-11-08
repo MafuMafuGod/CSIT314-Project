@@ -1,0 +1,56 @@
+<!-- «Boundary» CompanyProfilePage — shared form for
+ #09 Create company profile (mode = "create", alt 2a errors) and
+ #11 Update company information (mode = "update", pre-filled, alt 3a errors).
+ Fields follow Dominic's design: all required except Website. -->
+
+{% extends "base.html" %}
+{% set creating = mode == 'create' %}
+{% block title %}{{ 'Create Company Profile' if creating else 'Update Company Information' }} | 4RENO{% endblock %}
+{% block content %}
+
+<style>
+    .cp-form h2:first-of-type { margin-top: 0; }
+    .cp-form .hint { margin: -2px 0 6px; color: #6b7280; font-size: .85rem; }
+    .cp-form textarea { min-height: 110px; margin-bottom: 15px; }
+</style>
+
+{% macro field(name, label, type="text", placeholder="", maxlength=100, required=True) %}
+<label for="{{ name }}">{{ label }} {% if required %}<span class="req" aria-hidden="true">*</span>{% else %}<span class="opt">(optional)</span>{% endif %}</label>
+<input id="{{ name }}" type="{{ type }}" name="{{ name }}" value="{{ data[name] }}" maxlength="{{ maxlength }}"
+    placeholder="{{ placeholder }}" {% if required %}aria-required="true"{% endif %}
+    class="{{ 'field-error' if fieldErrors[name] }}">
+{% if fieldErrors[name] %}<p class="field-warning">{{ fieldErrors[name] }}</p>{% endif %}
+{% endmacro %}
+
+<h1 style="text-align:left">{{ 'Create Company Profile' if creating else 'Update Company Information' }}</h1>
+
+{% if error %}<div class="banner err" role="alert">{{ error }}</div>
+{% elif fieldErrors %}<div class="banner err" role="alert">Please correct the highlighted fields.</div>{% endif %}
+
+<form class="formbox cp-form" method="post"
+    action="{{ url_for('company_profile.createCompanyProfilePage' if creating else 'company_profile.updateCompanyProfilePage') }}"
+    novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <p class="hint">Fields marked <span class="req">*</span> are required.</p>
+
+    <h2>Company details</h2>
+    {{ field("companyName", "Company name", placeholder="e.g. Lim & Co Interiors") }}
+
+    <label for="description">Description <span class="req" aria-hidden="true">*</span></label>
+    <textarea id="description" name="description" maxlength="1000" aria-required="true"
+        placeholder="What your company does, your style, the kinds of homes you work on"
+        class="{{ 'field-error' if fieldErrors.description }}">{{ data.description }}</textarea>
+    {% if fieldErrors.description %}<p class="field-warning">{{ fieldErrors.description }}</p>{% endif %}
+
+    <h2>Business contact</h2>
+    {{ field("businessEmail", "Business email", type="email", placeholder="hello@yourcompany.sg") }}
+    {{ field("businessPhone", "Business phone", type="tel", placeholder="+65 6123 4567", maxlength=20) }}
+    {{ field("businessAddress", "Business address", placeholder="Street, unit, postal code", maxlength=200) }}
+    {{ field("website", "Website", type="url", placeholder="https://yourcompany.sg", maxlength=200, required=False) }}
+
+    <div class="cp-buttons">
+        <button class="btn" type="submit">{{ 'Create Profile' if creating else 'Save Changes' }}</button>
+        <a class="btn outline" href="{{ url_for('company_profile.viewCompanyProfilePage') }}">Cancel</a>
+    </div>
+</form>
+{% endblock %}
