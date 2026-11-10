@@ -45,9 +45,9 @@ class UserAccount:
     # ---- #06 / #14 / #31 / #70 Login ----------------------------------------------
     @classmethod
     def userAccountLogin(cls, u: str, p: str) -> bool:
-        """#06 step 5 / #14 / #31 step 6 / #70: verify credentials. A suspended account cannot
-        log in (#45 step 6)."""
-        account = cls._findAccount(u)
+        """#06 step 5 / #14 / #31 step 6 / #70: verify credentials. The email and password are
+        case-sensitive (they must match exactly). A suspended account cannot log in (#45 step 6)."""
+        account = next((a for a in cls._accounts if a._u == u), None)
         return account is not None and account._p == p and account._status == "active"
 
     @classmethod

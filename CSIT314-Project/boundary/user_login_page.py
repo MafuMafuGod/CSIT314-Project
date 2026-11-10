@@ -59,7 +59,7 @@ def submitLogin(u: str, p: str) -> str:
     # Step 6: check profile for access permissions
     profile = controller.getUserProfile(u)
     # session = the browser's login memory. Saving u and profile means "this user is logged in"
-    session["u"] = controller.getAccountEmail(u)
+    session["u"] = u
     session["profile"] = profile
     return displayLoginSuccess(profile)
 

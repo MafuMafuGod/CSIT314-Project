@@ -18,10 +18,3 @@ class UserLoginController:
     def getUserProfile(self, u: str) -> str:
         """Step 6: returns profile from the Entity."""
         return UserAccount.getProfile(u)
-
-    def getAccountEmail(self, u: str) -> str:
-        """Returns the email as stored in the account (capital letters typed are ignored)."""
-        for account in UserAccount.getAllAccounts():
-            if account["u"].lower() == u.lower():
-                return account["u"]
-        return u

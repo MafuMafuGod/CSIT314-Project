@@ -49,15 +49,20 @@ class TC31(BaseTest):
         self.assertIn("Log out", html)
 
     def test_TC31_8_email_in_capital_letters(self):
+        # login is case-sensitive: the email must match exactly
         browser = newBrowser()
-        browser.post("/login", data={"u": "CUSTOMER@4RENO.COM", "p": "password123", "csrf_token": "t"})
-        # the session must hold the email as stored (small letters)
+        html = postText(browser, "/login", u="CUSTOMER@4RENO.COM", p="password123")
+        self.assertIn("Invalid username or password", html)
         with browser.session_transaction() as s:
-            self.assertEqual("customer@4reno.com", s.get("u"))
-        # so My Shortlist still shows the Customer's saved IDPs
-        html = getText(browser, "/shortlist")
-        self.assertIn("Punggol Waterway Condo Kitchen", html)
-        self.assertIn("Sengkang BTO Minimalist Living Room", html)
+            self.assertIsNone(s.get("u"))                     # not logged in
+
+    def test_TC31_9_password_in_capital_letters(self):
+        # login is case-sensitive: the password must match exactly
+        browser = newBrowser()
+        html = postText(browser, "/login", u="customer@4reno.com", p="PASSWORD123")
+        self.assertIn("Invalid username or password", html)
+        with browser.session_transaction() as s:
+            self.assertIsNone(s.get("u"))
 
 
 if __name__ == "__main__":
