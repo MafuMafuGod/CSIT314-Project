@@ -36,9 +36,7 @@ Demo accounts (u / p / profile):
 """
 
 
-import secrets
-
-from flask import Flask, request, session, abort, flash, redirect, url_for
+from flask import Flask, request, session, flash, redirect, url_for
 
 from boundary import ALL_BLUEPRINTS
 from boundary.profiles import getProfileLabels
@@ -49,16 +47,7 @@ app.secret_key = "dev-secret-change-me"
 
 
 # Infrastructure (not part of the BCE diagrams): session check, login guard, admin guard,
-# designer guard + CSRF protection
-
-@app.context_processor
-def inject_csrf():
-    def csrf_token():
-        if "csrf" not in session:
-            session["csrf"] = secrets.token_hex(16)
-        return session["csrf"]
-    return {"csrf_token": csrf_token}
-
+# designer guard
 
 @app.context_processor
 def inject_profile_labels():
@@ -127,12 +116,6 @@ def requireDesigner():
         if session.get("profile") != "designer":
             flash("Only Interior Designers can access this page.", "err")
             return redirect(url_for("home.displayHome"))
-
-
-@app.before_request
-def check_csrf():
-    if request.method == "POST" and request.form.get("csrf_token") != session.get("csrf"):
-        abort(400, "Invalid CSRF token")
 
 
 for bp in ALL_BLUEPRINTS:

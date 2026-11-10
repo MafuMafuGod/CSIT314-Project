@@ -31,7 +31,6 @@
                 {% for category, message in get_flashed_messages(with_categories=true) %}
                 <div class="banner {{ category }}" role="alert">{{ message }}</div>
                 {% endfor %}
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                 <label for="u">Email</label>
                 <input id="u" type="email" name="u" value="{{ u }}" placeholder="Enter your email"

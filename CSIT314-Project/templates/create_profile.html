@@ -35,7 +35,6 @@ Create profile form, validation errors (7a), "Profile summary" confirmation -->
 
     {% else %}
     <form class="formbox adm-form" method="post" action="/admin/profiles/create" novalidate>
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
         <div class="adm-two">
             <div class="adm-field">

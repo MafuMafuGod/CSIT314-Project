@@ -42,7 +42,6 @@
 
     <form class="create-user-card create-user-form" method="post"
         action="{{ url_for('create_account.createAccountPage') }}" novalidate>
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
         <!-- Keep each field in its own full-width row. -->
         <div class="create-user-fields">

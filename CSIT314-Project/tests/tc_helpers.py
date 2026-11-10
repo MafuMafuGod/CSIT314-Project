@@ -33,17 +33,14 @@ class BaseTest(unittest.TestCase):
 
 
 def newBrowser():
-    """A browser that is not logged in (with the CSRF token the forms need)."""
-    browser = app_module.app.test_client()
-    with browser.session_transaction() as s:
-        s["csrf"] = "t"
-    return browser
+    """A browser that is not logged in."""
+    return app_module.app.test_client()
 
 
 def login(email=CUSTOMER, password=CUSTOMER_PASSWORD):
     """A browser that is already logged in."""
     browser = newBrowser()
-    browser.post("/login", data={"u": email, "p": password, "csrf_token": "t"})
+    browser.post("/login", data={"u": email, "p": password})
     return browser
 
 
@@ -59,7 +56,6 @@ def getText(browser, url):
 
 def postText(browser, url, **data):
     """Click a button (POST, follows redirects) and return the HTML text."""
-    data["csrf_token"] = "t"
     return cleanText(browser.post(url, data=data, follow_redirects=True).get_data(as_text=True))
 
 

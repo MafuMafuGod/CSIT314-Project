@@ -47,7 +47,7 @@ def platform():
 
 
 def post(client, period, **data):
-    return client.post(f"/platform/reports/{period}", data={"csrf_token": "t", **data}).get_data(as_text=True)
+    return client.post(f"/platform/reports/{period}", data=data).get_data(as_text=True)
 
 
 # ---------------------------------------------------------------- Entity

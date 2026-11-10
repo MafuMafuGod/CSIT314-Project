@@ -51,11 +51,10 @@ def login_as(client, u, profile="designer"):
     with client.session_transaction() as s:
         s["u"] = u
         s["profile"] = profile
-        s["csrf"] = "t"
 
 
 def post(client, path, **fields):
-    return client.post(path, data={"csrf_token": "t", **fields}, follow_redirects=True)
+    return client.post(path, data=fields, follow_redirects=True)
 
 
 # ---------------------------------------------------------------- Entity

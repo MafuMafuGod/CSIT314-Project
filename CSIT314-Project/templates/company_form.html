@@ -30,7 +30,6 @@
 <form class="formbox cp-form" method="post"
     action="{{ url_for('company_profile.createCompanyProfilePage' if creating else 'company_profile.updateCompanyProfilePage') }}"
     novalidate>
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <p class="hint">Fields marked <span class="req">*</span> are required.</p>
 
     <h2>Company details</h2>

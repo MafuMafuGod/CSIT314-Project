@@ -160,7 +160,5 @@ class TestLogout:                                                           # #3
 
     def test_already_logged_out_goes_to_login(self):                       # 2a
         client = app_module.app.test_client()
-        with client.session_transaction() as s:
-            s["csrf"] = "t"
-        r = client.post("/logout", data={"csrf_token": "t"})
+        r = client.post("/logout")
         assert r.status_code == 302 and "/login" in r.headers["Location"]

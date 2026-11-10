@@ -10,7 +10,6 @@
 
 <form class="formbox adm-form" method="post" novalidate
     action="{{ url_for('idp_category_management.createCategoryPage') if creating else url_for('idp_category_management.updateCategoryPage', categoryID=category.categoryID) }}">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
     <div class="adm-field">
         <label for="name">Category name</label>

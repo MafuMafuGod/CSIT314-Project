@@ -138,6 +138,5 @@ class TestPages:
 
     def test_non_admin_is_turned_away(self):                               # #45 6b (precondition)
         customer = loggedIn(app_module, "customer@4reno.com", "password123")
-        assert customer.post("/admin/users/suspend/designer@4reno.com",
-                             data={"csrf_token": "t"}).status_code == 302
+        assert customer.post("/admin/users/suspend/designer@4reno.com").status_code == 302
         assert UserAccount.selectUserAccount("designer@4reno.com")["status"] == "active"

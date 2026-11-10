@@ -66,9 +66,7 @@ class CaseSensitiveLoginTest(unittest.TestCase):
         # log in, then look at what the session remembers
         app_module.app.config["TESTING"] = True
         with app_module.app.test_client() as browser:
-            with browser.session_transaction() as s:
-                s["csrf"] = "t"
-            browser.post("/login", data={"u": "customer@4reno.com", "p": "password123", "csrf_token": "t"})
+            browser.post("/login", data={"u": "customer@4reno.com", "p": "password123"})
             with browser.session_transaction() as s:
                 actual = s.get("u")
         self.assertEqual("customer@4reno.com", actual,

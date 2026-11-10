@@ -30,7 +30,6 @@
 
 {% else %}
 <form class="formbox adm-form" method="post" action="/admin/users/edit/{{ accountU | urlencode }}" novalidate>
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
     <div class="adm-two">
         <div class="adm-field">

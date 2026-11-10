@@ -61,7 +61,6 @@
         <!-- If the user is logged in (session has "u"), show only Log out -->
         {% if session.get('u') %}
         <form method="post" action="{{ url_for('logout.logoutRoute') }}">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
           <button class="menu-item" type="submit">Log out</button>
         </form>
         <!-- Otherwise (not logged in), show only Log in -->

@@ -18,7 +18,6 @@ endmacro %}
 
 <form class="formbox adm-form" method="post" novalidate
     action="{{ url_for('create_portfolio.openCreatePage', kind=kind) if creating else url_for('update_portfolio.editProjectPage', kind=kind, idpID=idpID) }}">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
     <div class="adm-field">
         <label for="title">Project title</label>

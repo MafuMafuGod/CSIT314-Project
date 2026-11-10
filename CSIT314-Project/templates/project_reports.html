@@ -22,7 +22,6 @@
 </nav>
 
 <form class="formbox adm-form" method="post" action="{{ url_for('project_reports.reportDashboard', period=period) }}" novalidate>
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="adm-two">
         <div class="adm-field">
             <label for="projectID">Project</label>

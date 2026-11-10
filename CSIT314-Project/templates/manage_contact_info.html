@@ -20,7 +20,6 @@
 {% elif fieldErrors %}<div class="banner err" role="alert">Please correct the missing or invalid fields.</div>{% endif %}
 
 <form class="formbox cp-form" method="post" action="{{ url_for('manage_contact_info.saveContactInfo') }}" novalidate>
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
     {{ field("businessEmail", "Business Email", type="email", required=True, placeholder="hello@yourcompany.sg") }}
     {{ field("businessPhone", "Business Phone", type="tel", maxlength=20, required=True, placeholder="+65 6123 4567") }}

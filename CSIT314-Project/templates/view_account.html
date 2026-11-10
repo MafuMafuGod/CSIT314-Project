@@ -73,7 +73,6 @@
 <!-- #45: Suspend pop-up -->
 <div id="suspend-modal" class="adm-modal">
     <form class="adm-modal-box" method="post" action="/admin/users/suspend/{{ userAccount.u | urlencode }}">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <h2>Suspend {{ userAccount.name }}?</h2>
         <p class="sub">They will be signed out immediately and cannot sign in until the account is reactivated. Their
             data is kept.</p>

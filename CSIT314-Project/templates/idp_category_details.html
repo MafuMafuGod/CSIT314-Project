@@ -33,7 +33,6 @@
 
     <form class="adm-filters" style="margin-top:16px" method="post"
         action="{{ url_for('idp_category_management.assignProjectPage', categoryID=category.categoryID) }}">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <select name="projectID" aria-label="Project to assign">
             <option value="">Assign a project to this category…</option>
             {% for p in assignable %}<option value="{{ p.projectID }}">{{ p.name }} ({{ p.category or 'no category' }})</option>{% endfor %}
@@ -46,7 +45,6 @@
 <!-- #68: delete pop-up. Cancel closes it and nothing is deleted. -->
 <div id="delete-modal" class="adm-modal">
     <form class="adm-modal-box" method="post" action="{{ url_for('idp_category_management.deleteCategoryPage', categoryID=category.categoryID) }}">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <h2>Delete "{{ category.name }}"?</h2>
         {% if projects %}
         <p class="sub">This category still has {{ projects | length }} linked project(s), so it cannot be deleted. Move them to another category first.</p>

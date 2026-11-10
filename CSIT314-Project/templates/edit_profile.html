@@ -33,7 +33,6 @@
     Permission changes apply the next time they sign in.</p>
 
 <form class="formbox adm-form" method="post" action="/admin/profiles/edit/{{ profileName | urlencode }}" novalidate>
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
     <div class="adm-field" style="max-width:380px">
         <label for="name">Profile name</label>
