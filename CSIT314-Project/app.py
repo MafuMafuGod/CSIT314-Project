@@ -102,9 +102,13 @@ def requirePlatform():
 def requireAdmin():
     """Precondition for #42-#51 (and #45 6b / #50 2a "no permission"): only a logged-in
     User Admin may open /admin pages."""
-    if request.path.startswith("/admin") and session.get("profile") != "admin":
-        flash("You do not have permission to access User Management.", "err")
-        return redirect(url_for("home.displayHome"))
+    if request.path.startswith("/admin"):
+        if not session.get("u"):
+            flash("Please log in as a User Admin.", "info")
+            return redirect(url_for("login.loginPage"))
+        if session.get("profile") != "admin":
+            flash("You do not have permission to access User Management.", "err")
+            return redirect(url_for("home.displayHome"))
 
 
 @app.before_request
