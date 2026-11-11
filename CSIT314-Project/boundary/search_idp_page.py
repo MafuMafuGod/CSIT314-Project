@@ -1,4 +1,5 @@
-"""«Boundary» SearchIDPPage — #32 Search IDPs (no class: idp_search.html + route functions).
+"""«Boundary» 
+SearchIDPPage — #32 Search IDPs (no class: idp_search.html + route functions).
 An empty result list is handled by idp_search.html itself (6a: "No matching IDPs were found")."""
 from flask import Blueprint, render_template, request
 
@@ -20,7 +21,7 @@ def displaySearchPage(categories: list, keyword: str = "", category: str = "",
 def validateSearch(keyword: str, category: str, categories: list) -> str:
     """Step 5: Boundary input check. Returns an error message, "" = valid."""
     # nothing typed and no category chosen
-    if not keyword and not category:                                     # 31 (5a)
+    if not keyword and not category:                                     # 32 (5a)
         return "Please enter a keyword or select a category."
     # keyword is too long
     if len(keyword) > MAX_KEYWORD_LENGTH:
@@ -31,11 +32,11 @@ def validateSearch(keyword: str, category: str, categories: list) -> str:
     return ""
 
 # Shows the search page again with an error message
-def displayError(categories: list, keyword: str, category: str, error: str) -> str:   # 31 (5a)
+def displayError(categories: list, keyword: str, category: str, error: str) -> str:   # 32 (5a)
     return displaySearchPage(categories, keyword, category, error=error)
 
 # Shows the search page with the results (an empty list shows "No matching IDPs")
-def displayResults(categories: list, keyword: str, category: str, idpList: list) -> str:  # step 7 / 6a
+def displayResults(categories: list, keyword: str, category: str, idpList: list) -> str:  # 31 (step 7 / 6a)
     return displaySearchPage(categories, keyword, category, searched=True, idpList=idpList)
 
 # Runs the search steps in order: get categories, check input, search, show results

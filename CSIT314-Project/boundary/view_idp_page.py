@@ -24,12 +24,12 @@ def getBackUrl() -> str:
     return url_for("search_idp.searchPage")
 
 # Shows the details page for one IDP
-def displayIDPDetails(idp: dict) -> str:                                # step 4
+def displayIDPDetails(idp: dict) -> str:                                # 33 (step 4)
     return render_template("idp_details.html", idp=idp, error=None,
                            backUrl=getBackUrl(), active="search")
 
 # Shows the same page with an error message instead of an IDP
-def displayError(message: str) -> str:                                  # 3a
+def displayError(message: str) -> str:                                  # 33 (3a)
     return render_template("idp_details.html", idp=None, error=message,
                            backUrl=getBackUrl(), active="search")
 

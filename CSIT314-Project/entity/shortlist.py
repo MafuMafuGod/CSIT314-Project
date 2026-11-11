@@ -1,4 +1,5 @@
-"""«Entity» Shortlist — each Customer's favourite list of IDPs.
+"""«Entity» 
+Shortlist — each Customer's favourite list of IDPs
 Used by #34 Save IDP to Shortlist, #35 Search Shortlist, #36 View Shortlisted IDP."""
 from datetime import date
 
@@ -14,14 +15,17 @@ class Shortlist:
         self._savedDate = savedDate or date.today().isoformat()
 
     # ---- #34 Save IDP to Shortlist ------------------------------------------
+    # @classmethod = the method is called on the class itself, e.g. Shortlist.isSaved(...)
     @classmethod
     def isSaved(cls, customerU: str, idpID: int) -> bool:
         """#34 step 3 / #36 step 4: is this IDP already in the Customer's Shortlist?"""
+        # True if at least one saved row has this Customer and this IDP
         return any(e._customerU == customerU and e._idpID == idpID for e in cls._entries)
 
     @classmethod
     def saveIDP(cls, customerU: str, idpID: int) -> bool:
         """#34 step 4: add the IDP to the Customer's Shortlist."""
+        # add one new row to the table
         cls._entries.append(Shortlist(customerU, idpID))
         return True
 
@@ -29,6 +33,7 @@ class Shortlist:
     @classmethod
     def getSavedIDPIDs(cls, customerU: str) -> list:
         """#35 step 5: the IDs of the IDPs the Customer has saved, newest first."""
+        # only this Customer's rows, newest first (reversed)
         return [e._idpID for e in reversed(cls._entries) if e._customerU == customerU]
 
 

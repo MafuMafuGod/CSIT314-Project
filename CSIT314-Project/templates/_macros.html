@@ -1,8 +1,12 @@
 <!-- IDP result card and IDP detail layout
  shared by search and detail pages-->
 
+{# A macro is a reusable piece of HTML, like a function. #}
+{# idpCard draws one project card. Used by search, Shortlist and home. #}
+
 {% macro idpCard(idp, buttonText, url) %}
 <div class="card">
+    {# show the picture, or the word "Image" when there is none #}
     <div class="img">{% if idp.imageURL %}<img src="{{ idp.imageURL }}" alt="">{% else %}Image{% endif %}</div>
     <h3>{{ idp.title }}</h3>
     <p class="sub">{{ idp.companyName }}{% if idp.companyName and idp.category %} | {% endif %}{{ idp.category }}</p>
@@ -10,6 +14,7 @@
 </div>
 {% endmacro %}
 
+{# idpDetail draws the full project: image, title, category, company and description. #}
 {% macro idpDetail(idp) %}
 <div class="detail">
     <div class="img placeholder big">{% if idp.imageURL %}<img src="{{ idp.imageURL }}" alt=""
@@ -19,6 +24,7 @@
         {% if idp.category %}<span class="tag">{{ idp.category }}</span>{% endif %}
         {% if idp.companyName %}<p>By {{ idp.companyName }}</p>{% endif %}
         <div class="desc">{{ idp.description or 'No description available.' }}</div>
+        {# caller() = whatever the page wrote between {% call %} and {% endcall %}, e.g. the Save form #}
         {{ caller() }}
     </div>
 </div>

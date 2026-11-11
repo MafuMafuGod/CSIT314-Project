@@ -93,6 +93,7 @@
   </script>
   {% endblock %} {% block body %}
   <main>
+    {# messages sent with flash() in the boundary (e.g. "IDP saved...") show here as coloured banners #}
     {% with messages = get_flashed_messages(with_categories=true) %} {% for
     category, message in messages %}
     <div class="banner {{ category }}">{{ message }}</div>

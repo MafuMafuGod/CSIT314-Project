@@ -1,4 +1,5 @@
-"""«Control» SearchIDPController — #32 Search IDPs."""
+"""«Control» 
+SearchIDPController — #32 Search IDPs"""
 from entity import InteriorDesignProject
 
 
